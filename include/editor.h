@@ -10,7 +10,7 @@ namespace mlstudio {
 class Editor : public QObject
 {
 	Q_OBJECT
-	Q_PROPERTY(dnai::mlstudio::DatasetHandler *datasetHandler READ datasetHandler CONSTANT)
+    Q_PROPERTY(const dnai::mlstudio::DatasetHandler *datasetHandler READ datasetHandler CONSTANT)
 
 public:
 	explicit Editor(QObject *parent = nullptr);

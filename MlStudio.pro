@@ -13,13 +13,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-        main.cpp \
-    editor.cpp \
-    dataset.cpp \
-    iterableqqmlpropertymap.cpp \
-    dataset.cpp \
-    iterableqqmlpropertymap.cpp \
-    datasethandler.cpp
+        src/main.cpp \
+        src/editor.cpp \
+        src/dataset.cpp \
+        src/datasethandler.cpp \
+        src/iterableqqmlpropertymap.cpp \
 
 RESOURCES += qml.qrc
 
@@ -34,13 +32,13 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+INCLUDEPATH += include/
+
 HEADERS += \
-    editor.h \
-    datasethandler.h \
-    dataset.h \
-    iterableqqmlpropertymap.h \
-    iterableqqmlpropertymap.h \
-    editor.h
+    include/editor.h \
+    include/datasethandler.h \
+    include/dataset.h \
+    include/iterableqqmlpropertymap.h \
 
 DISTFILES += \
     dark.json

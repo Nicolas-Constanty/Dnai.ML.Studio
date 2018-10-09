@@ -1,13 +1,12 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>Datasets/Parameters/Import.qml</file>
-        <file>Datasets/Parameters/SimpleLabeling.qml</file>
-        <file>Datasets/Contents/Import.qml</file>
-        <file>Datasets/Contents/SimpleLabeling.qml</file>
-        <file>Datasets/DatasetTools.qml</file>
-        <file>EditorView.qml</file>
+        <file>resources/EditorView.qml</file>
+        <file>resources/main.qml</file>
+        <file>resources/Datasets/DatasetTools.qml</file>
+        <file>resources/Datasets/Parameters/Import.qml</file>
+        <file>resources/Datasets/Parameters/SimpleLabeling.qml</file>
+        <file>resources/Datasets/Contents/Import.qml</file>
+        <file>resources/Datasets/Contents/SimpleLabeling.qml</file>
     </qresource>
 </RCC>
