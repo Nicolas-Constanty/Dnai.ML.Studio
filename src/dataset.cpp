@@ -51,8 +51,8 @@ namespace mlstudio {
 
 	void Dataset::setLabel(int index, const QString& label)
 	{
+        m_labelNames[index] = label;
 		emit labelNamesChanged(labelNames());
-
 	}
 
 	QString Dataset::getLabel(const int index)
@@ -74,7 +74,7 @@ namespace mlstudio {
 
 	void Dataset::setLabels(IterableQQmlPropertyMap* labels)
 	{
-		for (const auto key : (*labels).keys())
+        for (const auto &key : (*labels).keys())
 			m_labels[key] = (*labels)[key];
 		emit labelsChanged(&m_labels);
 	}

@@ -1,6 +1,11 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
 
+import "Datasets/"
+
+import Dnai.Settings 1.0
+import Dnai.Theme 1.0
+
 ApplicationWindow {
     visible: true
     width: 1280
@@ -9,6 +14,7 @@ ApplicationWindow {
 
     header: TabBar {
         id: tabBar
+
         currentIndex: swipeView.currentIndex
 
         TabButton {
@@ -23,6 +29,10 @@ ApplicationWindow {
         TabButton {
             text: qsTr("Result")
         }
+
+        background: Rectangle {
+            color: AppSettings.theme.colors.background.color1
+        }
     }
 
     SwipeView {
@@ -30,12 +40,18 @@ ApplicationWindow {
         anchors.fill: parent
         currentIndex: tabBar.currentIndex
 
-        Page1Form {
+        EditorView {
+            tools: DatasetTools {}
         }
-
-        Page2Form {
-        }
+        EditorView {}
+        EditorView {}
+        EditorView {}
     }
 
-
+    Rectangle {
+        height: 2
+        anchors.left: parent.left
+        anchors.right: parent.right
+        color: AppSettings.theme.colors.background.color1
+    }
 }
