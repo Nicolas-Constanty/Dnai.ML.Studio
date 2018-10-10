@@ -25,40 +25,6 @@ IterableQQmlPropertyMap* Dataset::labels()
     return &m_labels;
 }
 
-QList<QString> Dataset::labelNames() const
-{
-    return m_labelNames.toList();
-}
-
-void Dataset::appendLabel(const QString& label)
-{
-    if (m_labelNames.indexOf(label) == m_labelNames.count())
-    {
-        m_labelNames.append(label);
-    }
-    emit labelNamesChanged(labelNames());
-}
-
-void Dataset::removeLabel(const QString& label)
-{
-    if (m_labelNames.indexOf(label) != m_labelNames.count())
-    {
-        m_labelNames.removeOne(label);
-    }
-    emit labelNamesChanged(labelNames());
-}
-
-void Dataset::setLabel(int index, const QString& label)
-{
-    m_labelNames[index] = label;
-    emit labelNamesChanged(labelNames());
-}
-
-QString Dataset::getLabel(const int index)
-{
-    return m_labelNames[index];
-}
-
 void Dataset::setName(const QString name)
 {
     m_data["name"] = name;
@@ -76,17 +42,6 @@ void Dataset::setLabels(IterableQQmlPropertyMap* labels)
     for (const auto &key : (*labels).keys())
         m_labels[key] = (*labels)[key];
     emit labelsChanged(&m_labels);
-}
-
-void Dataset::setLabelNames(QList<QString> labelNames)
-{
-    for (const auto& l : labelNames)
-    {
-        if (m_labelNames.indexOf(l) == m_labelNames.count())
-        {
-            m_labelNames.append(l);
-        }
-    }
 }
 
 void Dataset::initDataset()

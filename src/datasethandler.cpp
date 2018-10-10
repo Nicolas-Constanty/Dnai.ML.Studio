@@ -100,3 +100,54 @@ Dataset* DatasetHandler::dataset(QQmlListProperty<Dataset>* list, int i) {
 int DatasetHandler::datasetCount(QQmlListProperty<Dataset>* list) {
     return reinterpret_cast< DatasetHandler* >(list->data)->datasetCount();
 }
+
+QStringList DatasetHandler::labelNames() const
+{
+    return m_labelNames.toList();
+}
+
+void DatasetHandler::appendLabel(const QString& label)
+{
+    if (m_labelNames.indexOf(label) != -1)
+    {
+        return;
+    }
+    m_labelNames.append(label);
+    emit labelNamesChanged(labelNames());
+}
+
+void DatasetHandler::removeLabel(const QString& label)
+{
+    if (m_labelNames.indexOf(label) == -1)
+    {
+        return;
+    }
+    m_labelNames.removeOne(label);
+    emit labelNamesChanged(labelNames());
+}
+
+void DatasetHandler::setLabel(int index, const QString& label)
+{
+    m_labelNames[index] = label;
+    emit labelNamesChanged(labelNames());
+}
+
+QString DatasetHandler::getLabel(const int index)
+{
+    return m_labelNames[index];
+}
+
+
+void DatasetHandler::setLabelNames(QStringList labelNames)
+{
+    for (const auto& l : labelNames)
+    {
+        if (m_labelNames.indexOf(l) == -1)
+        {
+            m_labelNames.append(l);
+        }
+    }
+    emit labelNamesChanged(this->labelNames());
+}
+
+

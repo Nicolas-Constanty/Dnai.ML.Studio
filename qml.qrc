@@ -12,5 +12,6 @@
         <file>resources/Templates/StringProperty.qml</file>
         <file>resources/Templates/PathProperty.qml</file>
         <file>resources/Templates/Parameters.qml</file>
+        <file>resources/Templates/TextAreaProperty.qml</file>
     </qresource>
 </RCC>
