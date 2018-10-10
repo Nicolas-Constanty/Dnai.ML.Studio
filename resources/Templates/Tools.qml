@@ -1,7 +1,9 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.4
+import QtQuick.Controls.impl 2.4
 
 import Dnai.Theme 1.0
+import Dnai.Settings 1.0
 
 import "../"
 
@@ -14,11 +16,17 @@ Item {
 
 
     TabBar {
+        id: control
         orientation: ListView.Vertical
         Repeater {
             model: toolsNames
             delegate: TabButton {
-                text: model.name
+                anchors.left: parent.left
+                anchors.right: parent.right
+                contentItem: Label {
+                    text: model.name
+                    font.pointSize: 12
+                }
             }
         }
     }
@@ -27,7 +35,9 @@ Item {
         id: _contentsComponent
         SwipeView {
             id: _contents
+            currentIndex: control.currentIndex
             anchors.fill: parent
+            orientation: "Vertical"
 
             Component.onCompleted: {
                 for (var i in _tools.contents)
@@ -41,6 +51,8 @@ Item {
         SwipeView {
             id: _parameters
             anchors.fill: parent
+            currentIndex: control.currentIndex
+            orientation: "Vertical"
 
             Component.onCompleted: {
                 for (var i in _tools.parameters)
