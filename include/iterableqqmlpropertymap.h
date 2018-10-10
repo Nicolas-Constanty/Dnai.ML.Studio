@@ -4,8 +4,6 @@
 #include <QQmlPropertyMap>
 #include <QAbstractListModel>
 
-namespace dnai {
-namespace mlstudio {
 class IterableQQmlPropertyMap : public QAbstractListModel
 {
     Q_OBJECT
@@ -46,7 +44,5 @@ signals:
 private:
     QQmlPropertyMap m_map;
 };
-}
-}
 
 #endif // DNAI_UTILS_ITERABLE_QQMLPROPERTYMAP_H

@@ -4,8 +4,6 @@
 #include <QObject>
 #include "iterableqqmlpropertymap.h"
 
-namespace dnai {
-namespace mlstudio {
 class Dataset : public QObject
 {
     Q_OBJECT
@@ -56,7 +54,5 @@ private:
     QVector<QString> m_labelNames;
 
 };
-}
-}
 
 #endif // DATASET_H

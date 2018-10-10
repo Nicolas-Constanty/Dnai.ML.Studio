@@ -6,8 +6,7 @@
 #include "dataset.h"
 
 
-namespace dnai {
-namespace mlstudio {
+
 DatasetHandler::DatasetHandler(QObject *parent) : QObject (parent), m_currentDatasetIndex(0)
 {
 
@@ -100,6 +99,4 @@ Dataset* DatasetHandler::dataset(QQmlListProperty<Dataset>* list, int i) {
 
 int DatasetHandler::datasetCount(QQmlListProperty<Dataset>* list) {
     return reinterpret_cast< DatasetHandler* >(list->data)->datasetCount();
-}
-}
 }

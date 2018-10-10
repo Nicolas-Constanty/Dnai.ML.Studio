@@ -4,24 +4,18 @@
 #include <QObject>
 #include "datasethandler.h"
 
-namespace dnai {
-namespace mlstudio {
-
 class Editor : public QObject
 {
 	Q_OBJECT
-    Q_PROPERTY(dnai::mlstudio::DatasetHandler *datasetHandler READ datasetHandler CONSTANT)
+    Q_PROPERTY(DatasetHandler *datasetHandler READ datasetHandler CONSTANT)
 
 public:
 	explicit Editor(QObject *parent = nullptr);
 
-public slots:
     DatasetHandler *datasetHandler();
 
 private:
-	DatasetHandler m_datasetHandler;
+    DatasetHandler m_datasetHandler;
 };
-}
-}
 
 #endif // EDITOR_H

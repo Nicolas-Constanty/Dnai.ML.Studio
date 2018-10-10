@@ -6,7 +6,7 @@
 void registerQmlTypes()
 {
     //REGISTER EDITOR TO SINGLETON FOR QML
-    qmlRegisterSingletonType<dnai::mlstudio::Editor>
+    qmlRegisterSingletonType<Editor>
             (
                 "App.Controllers",
                 1, 0, "Editor",
@@ -14,12 +14,11 @@ void registerQmlTypes()
         Q_UNUSED(e)
         Q_UNUSED(js)
 
-        auto editor = new dnai::mlstudio::Editor();
+        auto editor = new Editor();
         return editor;
     }
     );
-    qmlRegisterType<dnai::mlstudio::DatasetHandler>("App.Controllers", 1, 0, "DatasetHandler");
-    qmlRegisterType<dnai::mlstudio::Dataset>("App.Controllers", 1, 0, "Dataset");
+
 }
 
 int main(int argc, char *argv[])
@@ -27,6 +26,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     registerQmlTypes();
+    qmlRegisterType<DatasetHandler>("App.Controllers", 1, 0, "DatasetHandler");
+    qmlRegisterType<Dataset>("App.Controllers", 1, 0, "Dataset");
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;

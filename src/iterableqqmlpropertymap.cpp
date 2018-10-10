@@ -1,7 +1,6 @@
 #include "iterableqqmlpropertymap.h"
 
-namespace dnai {
-namespace mlstudio {
+
 IterableQQmlPropertyMap::IterableQQmlPropertyMap(QObject *parent) : QAbstractListModel(parent)
 {
     QObject::connect(&m_map, SIGNAL(valueChanged(const QString &, const QVariant &)),
@@ -81,8 +80,5 @@ QHash<int, QByteArray> IterableQQmlPropertyMap::roleNames() const
     roles[ROLES::OBJ] = "obj";
     roles[ROLES::KEY] = "key";
     return roles;
-}
-
-}
 }
 
