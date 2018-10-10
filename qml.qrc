@@ -11,5 +11,6 @@
         <file>resources/Templates/Tools.qml</file>
         <file>resources/Templates/StringProperty.qml</file>
         <file>resources/Templates/PathProperty.qml</file>
+        <file>resources/Templates/Parameters.qml</file>
     </qresource>
 </RCC>

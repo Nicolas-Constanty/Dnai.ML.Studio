@@ -7,8 +7,11 @@ import Dnai.FontAwesome 1.0
 import Dnai.Settings 1.0
 
 Item {
+    id: _prop
     property string name: "prop"
     property alias value: _value.text
+
+    signal textEdited(string text)
 
     height: childrenRect.height
     anchors.left: parent.left
@@ -97,7 +100,7 @@ Item {
         selectFolder: true
         selectExisting: true
         onAccepted: {
-            _value.text = _selectFolder.fileUrl
+            _prop.textEdited(_selectFolder.fileUrl)
         }
     }
 
@@ -110,7 +113,7 @@ Item {
         selectMultiple: false
         nameFilters: [ "CSS files (*.csv)", "Video files (*.mp4)", "All files (*.csv *.mp4)" ]
         onAccepted: {
-            _value.text = _selectFile.fileUrl
+            _prop.textEdited(_selectFile.fileUrl)
         }
     }
 }
