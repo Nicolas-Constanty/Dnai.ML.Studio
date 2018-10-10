@@ -39,6 +39,7 @@ ApplicationWindow {
         id: swipeView
         anchors.fill: parent
         currentIndex: tabBar.currentIndex
+        interactive: false
 
         EditorView {
             id: _dataset

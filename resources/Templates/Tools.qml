@@ -38,7 +38,7 @@ Item {
             currentIndex: control.currentIndex
             anchors.fill: parent
             orientation: "Vertical"
-
+            interactive: false
             Component.onCompleted: {
                 for (var i in _tools.contents)
                     _contents.addItem(_tools.contents[i])
@@ -53,7 +53,7 @@ Item {
             anchors.fill: parent
             currentIndex: control.currentIndex
             orientation: "Vertical"
-
+            interactive: false
             Component.onCompleted: {
                 for (var i in _tools.parameters)
                     _parameters.addItem(_tools.parameters[i])

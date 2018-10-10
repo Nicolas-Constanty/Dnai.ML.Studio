@@ -7,6 +7,74 @@ import App.Controllers 1.0
 
 Item {
 
+    //DATASET DELEGATE COMPONENT
+    Component {
+        id: _datasetComponent
+        Item {
+            id: _dataset
+            height: 60
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 5
+
+            MouseArea {
+                anchors.fill: parent
+                anchors.topMargin: 1
+                anchors.bottomMargin: 1
+                onClicked: {
+                    _listDataset.currentIndex = index
+                    Editor.datasetHandler.currentDatasetIndex = index
+                }
+
+                Item {
+                    id: _header
+                    height: 60
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    Label {
+                        text: model.name
+                        anchors.left: parent.left
+                        anchors.leftMargin: 30
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.pointSize: 12
+                    }
+                }
+                Rectangle {
+                    id: _background
+                    anchors.fill: parent
+                    z: -1
+                    color: AppSettings.theme.colors.background.base
+                    border.color: AppSettings.theme.border.color
+                    border.width: AppSettings.theme.border.width
+                }
+            }
+        }
+    }
+
+    //DATASET LIST
+    Item {
+        clip: true
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: _dropAreaView.top
+        anchors.margins: 15
+        ListView {
+            id: _listDataset
+            anchors.fill: parent
+            model: Editor.datasetHandler.datasets
+            focus: true
+            highlight: Rectangle {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                color: "lightsteelblue"; radius: 5
+            }
+            delegate: _datasetComponent
+            spacing: 15
+        }
+    }
+
+
     //DROP AREA
     Rectangle {
         id: _dropAreaView
@@ -25,6 +93,7 @@ Item {
             text: "Drop dataset files here (Folder, .csv, .mp4)"
         }
 
+        //DROP AREA LOGIQUE
         DropArea {
             anchors.fill: parent
             onEntered: {
@@ -60,6 +129,8 @@ Item {
                         Editor.datasetHandler.createDatasetFromPath(drop.urls[i])
                     }
                 }
+                _dropLabel.text = "Drop dataset files here (Folder, .csv, .mp4)"
+                _dropAreaView.color = AppSettings.theme.colors.background.light
             }
 
             onExited: {
