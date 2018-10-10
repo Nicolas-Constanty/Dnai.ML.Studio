@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.11
 import QtQuick.Controls 2.4
 
 import Dnai.Theme 1.0
@@ -8,11 +8,13 @@ Item {
     property alias value: _value.text
 
     height: 30
+    anchors.left: parent.left
+    anchors.right: parent.right
     Label {
         id: _label
         text: name + " :"
         anchors.left: parent.left
-        anchors.leftMargin: 10
+        anchors.verticalCenter: _value.verticalCenter
     }
 
     TextField {

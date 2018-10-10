@@ -46,12 +46,12 @@ Item {
             }
         }
         //PATH PROPERTY
-//        T.PathProperty {
-//            name: "Path"
-//            value: Editor.datasetHandler.datasetsCount > 0 ? Editor.datasetHandler.currentDataset.path : ""
-//            onValueChanged: {
-//                Editor.datasetHandler.currentDataset.setPath(value)
-//            }
-//        }
+        T.PathProperty {
+            name: "Path"
+            value: Editor.datasetHandler.datasetCount > 0 ? Editor.datasetHandler.currentDataset.path : ""
+            onValueChanged: {
+                Editor.datasetHandler.currentDataset.setPath(value)
+            }
+        }
     }
 }

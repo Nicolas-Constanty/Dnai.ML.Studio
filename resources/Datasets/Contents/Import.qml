@@ -15,12 +15,13 @@ Item {
             height: 60
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.margins: 5
 
             MouseArea {
                 anchors.fill: parent
                 anchors.topMargin: 1
                 anchors.bottomMargin: 1
+                anchors.leftMargin: 5
+                anchors.rightMargin: 5
                 onClicked: {
                     _listDataset.currentIndex = index
                     Editor.datasetHandler.currentDatasetIndex = index
@@ -65,8 +66,6 @@ Item {
             model: Editor.datasetHandler.datasets
             focus: true
             highlight: Rectangle {
-                anchors.left: parent.left
-                anchors.right: parent.right
                 color: "lightsteelblue"; radius: 5
             }
             delegate: _datasetComponent
