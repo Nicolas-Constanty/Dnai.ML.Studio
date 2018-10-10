@@ -16,6 +16,7 @@ Item {
             height: 60
             anchors.left: parent.left
             anchors.right: parent.right
+            clip: true
 
             //DATASET STATES
             states: [
@@ -92,18 +93,20 @@ Item {
                         font.pointSize: 12
                     }
 
-                    ButtonAwesomeSolid {
+                    MouseArea {
                         id: _expendButton
                         height: 30
                         width: 30
-                        text: "\uf107"
-                        color: AppSettings.theme.text.color
-                        font.pointSize: 25
                         anchors.right: parent.right
                         anchors.rightMargin: 30
                         anchors.verticalCenter: parent.verticalCenter
-                        background: Rectangle {
-                            color: "transparent"
+                        propagateComposedEvents: true
+                        LabelAwesomeSolid {
+                            height: 30
+                            width: 30
+                            text: "\uf107"
+                            color: AppSettings.theme.text.color
+                            font.pointSize: 25
                         }
                         onClicked: {
                             if (_dataset.state === "Collapsed") {
@@ -111,6 +114,7 @@ Item {
                             } else {
                                 _dataset.state = "Collapsed"
                             }
+                            mouse.accepted = false
                         }
                     }
                 }
@@ -118,6 +122,7 @@ Item {
                 //INFOS
                 Item {
                     id: _infos
+                    visible: _dataset.state === "Expended"
                     height: 100
                     anchors.top: _header.bottom
                     anchors.left: parent.left
@@ -130,7 +135,33 @@ Item {
                         color:  AppSettings.theme.colors.background.color3
                         border.color: AppSettings.theme.colors.background.color1
                         border.width: 1
-                        radius: 5
+                        Column {
+                            anchors.fill: parent
+                            //PATH
+                            Item {
+                                id: _path
+                                height: 30
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                Label {
+                                    id: _pathLabel
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    anchors.leftMargin: 15
+                                    text: "Path :"
+                                }
+                                Label {
+                                    height: 30
+                                    anchors.left: _pathLabel.right
+                                    anchors.right: parent.right
+                                    anchors.leftMargin: 5
+                                    anchors.rightMargin: 15
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    horizontalAlignment: "AlignRight"
+                                    text: model.path
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -142,6 +173,7 @@ Item {
                     color: AppSettings.theme.colors.background.base
                     border.color: AppSettings.theme.colors.background.color1
                     border.width: AppSettings.theme.border.width
+                    opacity: 0.5
                 }
             }
         }
@@ -161,7 +193,8 @@ Item {
             model: Editor.datasetHandler.datasets
             focus: true
             highlight: Rectangle {
-                color: "lightsteelblue"; radius: 5
+                color: AppSettings.theme.colors.background.color1
+                radius: 5
             }
             delegate: _datasetComponent
             spacing: 15

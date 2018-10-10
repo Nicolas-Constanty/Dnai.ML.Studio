@@ -1,5 +1,6 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
+import QtGraphicalEffects 1.0
 
 import "Datasets/"
 
@@ -68,9 +69,18 @@ ApplicationWindow {
     }
 
     Rectangle {
+        id: _spitter
         height: 2
         anchors.left: parent.left
         anchors.right: parent.right
         color: AppSettings.theme.colors.background.color1
+    }
+    DropShadow {
+        anchors.fill: _spitter
+        verticalOffset: 3
+        radius: 8.0
+        samples: 17
+        color: "#80000000"
+        source: _spitter
     }
 }

@@ -23,10 +23,15 @@ Item {
         anchors.fill: parent
         orientation: Qt.Horizontal
 
+        handleDelegate: Rectangle {
+            width: 1
+            color: AppSettings.theme.colors.background.color1
+        }
+
         Rectangle {
             id: _tools
             property alias _contentChildren: _toolsLoader.sourceComponent
-            color: AppSettings.theme.colors.background.dark
+            color: AppSettings.theme.colors.background.base
             visible: enableTools
             width: 200
             Layout.maximumWidth: 250
@@ -61,7 +66,7 @@ Item {
         Rectangle {
             id: _parameters
             property alias _contentChildren: _parametersLoader.sourceComponent
-            color: AppSettings.theme.colors.background.dark
+            color: AppSettings.theme.colors.background.base
             visible: enableParameters
             width: 300
             Layout.maximumWidth: 300
