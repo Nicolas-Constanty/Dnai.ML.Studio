@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 import Dnai.Theme 1.0
 import Dnai.Settings 1.0
+import Dnai.FontAwesome 1.0
 
 import App.Controllers 1.0
 
@@ -16,6 +17,56 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
 
+            //DATASET STATES
+            states: [
+                State{
+                    name: "Collapsed"
+                    PropertyChanges{ target: _dataset; height: 60 }
+                    PropertyChanges{ target: _expendButton; rotation: 0 }
+                },
+                State{
+                    name:"Expended"
+                    PropertyChanges{ target: _dataset; height: 160 }
+                    PropertyChanges{ target: _expendButton; rotation: 90 }
+                }
+            ]
+            state: "Collapsed"
+            transitions: [
+                Transition {
+                    from: "Collapsed"
+                    to: "Expended"
+
+                   NumberAnimation {
+                       target: _dataset
+                       property: "height"
+                       duration: 150
+                       easing.type: Easing.InOutQuad
+                   }
+                   NumberAnimation {
+                       target: _expendButton
+                       property: "rotation"
+                       duration: 150
+                       easing.type: Easing.InOutQuad
+                   }
+                },
+                Transition {
+                    from: "Expended"
+                    to: "Collapsed"
+                    NumberAnimation {
+                       target: _dataset
+                       property: "height"
+                       duration: 150
+                       easing.type: Easing.InOutQuad
+                    }
+                    NumberAnimation {
+                       target: _expendButton
+                       property: "rotation"
+                       duration: 150
+                       easing.type: Easing.InOutQuad
+                    }
+                }
+            ]
+
             MouseArea {
                 anchors.fill: parent
                 anchors.topMargin: 1
@@ -27,6 +78,7 @@ Item {
                     Editor.datasetHandler.currentDatasetIndex = index
                 }
 
+                //HEADER
                 Item {
                     id: _header
                     height: 60
@@ -39,13 +91,56 @@ Item {
                         anchors.verticalCenter: parent.verticalCenter
                         font.pointSize: 12
                     }
+
+                    ButtonAwesomeSolid {
+                        id: _expendButton
+                        height: 30
+                        width: 30
+                        text: "\uf107"
+                        color: AppSettings.theme.text.color
+                        font.pointSize: 25
+                        anchors.right: parent.right
+                        anchors.rightMargin: 30
+                        anchors.verticalCenter: parent.verticalCenter
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+                        onClicked: {
+                            if (_dataset.state === "Collapsed") {
+                                _dataset.state = "Expended"
+                            } else {
+                                _dataset.state = "Collapsed"
+                            }
+                        }
+                    }
                 }
+
+                //INFOS
+                Item {
+                    id: _infos
+                    height: 100
+                    anchors.top: _header.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.margins: 5
+                        color:  AppSettings.theme.colors.background.color3
+                        border.color: AppSettings.theme.colors.background.color1
+                        border.width: 1
+                        radius: 5
+                    }
+                }
+
+                //BACKGROUND
                 Rectangle {
                     id: _background
                     anchors.fill: parent
                     z: -1
                     color: AppSettings.theme.colors.background.base
-                    border.color: AppSettings.theme.border.color
+                    border.color: AppSettings.theme.colors.background.color1
                     border.width: AppSettings.theme.border.width
                 }
             }
@@ -78,11 +173,11 @@ Item {
     Rectangle {
         id: _dropAreaView
         border.width: AppSettings.theme.border.width
-        border.color: AppSettings.theme.border.color
+        border.color: AppSettings.theme.colors.background.color1
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        height: 100
+        height: Editor.datasetHandler.datasetCount > 0 ? 100 : parent.height
         color: AppSettings.theme.colors.background.light
 
         //DROP LABEL

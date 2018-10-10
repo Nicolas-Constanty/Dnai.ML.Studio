@@ -8,12 +8,13 @@ import "../../Templates" as T
 Item {
     anchors.margins: 10
     //HEADER
-    Item {
+    Rectangle {
         id: _header
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.left: parent.left
-        height: 60
+        height: 40
+        color: AppSettings.theme.colors.background.base
         Label {
             anchors.centerIn: parent
             text: "Properties"

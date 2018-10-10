@@ -27,11 +27,14 @@ ApplicationWindow {
             text: qsTr("Neural Network")
         }
         TabButton {
+            text: qsTr("Training")
+        }
+        TabButton {
             text: qsTr("Result")
         }
 
         background: Rectangle {
-            color: AppSettings.theme.colors.background.color1
+            color: AppSettings.theme.colors.background.color2
         }
     }
 
@@ -47,9 +50,21 @@ ApplicationWindow {
                 editorView: _dataset
             }
         }
-        EditorView {}
-        EditorView {}
-        EditorView {}
+        EditorView {
+            enableTools: false
+            enableParameters: false
+        }
+        EditorView {
+            enableTools: false
+        }
+        EditorView {
+            enableTools: false
+            enableParameters: false
+        }
+        EditorView {
+            enableTools: false
+            enableParameters: false
+        }
     }
 
     Rectangle {

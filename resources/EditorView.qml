@@ -26,7 +26,7 @@ Item {
         Rectangle {
             id: _tools
             property alias _contentChildren: _toolsLoader.sourceComponent
-            color: AppSettings.theme["colors"]["background"]["base"]
+            color: AppSettings.theme.colors.background.dark
             visible: enableTools
             width: 200
             Layout.maximumWidth: 250
@@ -45,7 +45,7 @@ Item {
         Rectangle {
             id: _contentView
             property alias _contentChildren: _contentViewLoader.sourceComponent
-            color: AppSettings.theme["colors"]["background"]["base"]
+            color: AppSettings.theme.colors.background.dark
             Layout.minimumWidth: 50
             Layout.fillWidth: true
 //            Label {
@@ -61,7 +61,7 @@ Item {
         Rectangle {
             id: _parameters
             property alias _contentChildren: _parametersLoader.sourceComponent
-            color: AppSettings.theme["colors"]["background"]["base"]
+            color: AppSettings.theme.colors.background.dark
             visible: enableParameters
             width: 300
             Layout.maximumWidth: 300
