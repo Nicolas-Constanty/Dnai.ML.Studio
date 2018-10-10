@@ -8,5 +8,8 @@
         <file>resources/Datasets/Parameters/SimpleLabeling.qml</file>
         <file>resources/Datasets/Contents/Import.qml</file>
         <file>resources/Datasets/Contents/SimpleLabeling.qml</file>
+        <file>resources/Templates/Tools.qml</file>
+        <file>resources/Templates/StringProperty.qml</file>
+        <file>resources/Templates/PathProperty.qml</file>
     </qresource>
 </RCC>

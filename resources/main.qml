@@ -41,7 +41,10 @@ ApplicationWindow {
         currentIndex: tabBar.currentIndex
 
         EditorView {
-            tools: DatasetTools {}
+            id: _dataset
+            tools: DatasetTools {
+                editorView: _dataset
+            }
         }
         EditorView {}
         EditorView {}

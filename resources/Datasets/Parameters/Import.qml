@@ -28,7 +28,7 @@ Item {
         }
     }
     Column {
-        visible: Editor.datasetHandler.datasetsCount > 0
+        visible: Editor.datasetHandler.datasetCount > 0
         id: _properties
         anchors.margins: 10
         anchors.top: _header.bottom
@@ -40,18 +40,18 @@ Item {
         //NAME PROPERTY
         T.StringProperty {
             name: "Name"
-            value: Editor.datasetHandler.datasetsCount > 0 ? Editor.datasetHandler.currentDataset.name : ""
+            value: Editor.datasetHandler.datasetCount > 0 ? Editor.datasetHandler.currentDataset.name : ""
             onValueChanged: {
                 Editor.datasetHandler.currentDataset.setName(value)
             }
         }
         //PATH PROPERTY
-        T.PathProperty {
-            name: "Path"
-            value: Editor.datasetHandler.datasetsCount > 0 ? Editor.datasetHandler.currentDataset.path : ""
-            onValueChanged: {
-                Editor.datasetHandler.currentDataset.setPath(value)
-            }
-        }
+//        T.PathProperty {
+//            name: "Path"
+//            value: Editor.datasetHandler.datasetsCount > 0 ? Editor.datasetHandler.currentDataset.path : ""
+//            onValueChanged: {
+//                Editor.datasetHandler.currentDataset.setPath(value)
+//            }
+//        }
     }
 }

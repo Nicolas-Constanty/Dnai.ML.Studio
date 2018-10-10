@@ -13,9 +13,9 @@ Item {
     property alias tools: _tools._contentChildren
     property alias parameters: _parameters._contentChildren
     property alias content: _contentView._contentChildren
-    property alias contentComponent: _contentViewLoader.item
-    property alias parametersComponent: _parametersLoader .item
-    property alias toolsComponent: _toolsLoader.item
+    property alias contentItem: _contentViewLoader.item
+    property alias parametersItem: _parametersLoader .item
+    property alias toolsItem: _toolsLoader.item
 
     Layout.fillHeight: true
     Layout.fillWidth: true

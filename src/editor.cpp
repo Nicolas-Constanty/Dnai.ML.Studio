@@ -6,7 +6,7 @@ namespace mlstudio {
 	{
 	}
 
-	const DatasetHandler* Editor::datasetHandler() const
+    DatasetHandler* Editor::datasetHandler()
 	{
 		return &m_datasetHandler;
 	}
