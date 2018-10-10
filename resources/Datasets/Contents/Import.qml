@@ -196,6 +196,7 @@ Item {
                 color: AppSettings.theme.colors.background.color1
                 radius: 5
             }
+            highlightMoveDuration: 100
             delegate: _datasetComponent
             spacing: 15
         }
