@@ -18,6 +18,7 @@ SOURCES += \
         src/dataset.cpp \
         src/datasethandler.cpp \
         src/iterableqqmlpropertymap.cpp \
+    src/apihandler.cpp
 
 RESOURCES += qml.qrc
 
@@ -39,6 +40,8 @@ HEADERS += \
     include/datasethandler.h \
     include/dataset.h \
     include/iterableqqmlpropertymap.h \
+    include/iprovider.h \
+    include/apihandler.h
 
 DISTFILES += \
     dark.json

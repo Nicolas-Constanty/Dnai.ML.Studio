@@ -75,7 +75,6 @@ Item {
                 anchors.leftMargin: 5
                 anchors.rightMargin: 5
                 onClicked: {
-                    _listDataset.currentIndex = index
                     Editor.datasetHandler.currentDatasetIndex = index
                 }
 
@@ -196,7 +195,10 @@ Item {
                 color: AppSettings.theme.colors.background.color1
                 radius: 5
             }
+            currentIndex: Editor.datasetHandler.currentDatasetIndex
+            highlightFollowsCurrentItem: true
             highlightMoveDuration: 100
+            highlightResizeDuration: 50
             delegate: _datasetComponent
             spacing: 15
         }

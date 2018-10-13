@@ -13,8 +13,6 @@ T.Parameters {
     //HEADER
     title: "Labels properties"
 
-
-
     content: [
         T.TextAreaProperty {
             name: "Tags"

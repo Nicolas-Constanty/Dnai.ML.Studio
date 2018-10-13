@@ -32,7 +32,6 @@ Item {
         }
     }
     Column {
-        visible: Editor.datasetHandler.datasetCount > 0
         id: _properties
         anchors.margins: 10
         anchors.top: _header.bottom

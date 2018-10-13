@@ -15,6 +15,7 @@ T.Parameters {
         //NAME PROPERTY
         T.StringProperty {
             name: "Name"
+            visible: Editor.datasetHandler.datasetCount > 0
             value: Editor.datasetHandler.datasetCount > 0 ? Editor.datasetHandler.currentDataset.name : ""
             onTextEdited: {
                 Editor.datasetHandler.currentDataset.setName(value)
@@ -23,6 +24,7 @@ T.Parameters {
         //PATH PROPERTY
         T.PathProperty {
             name: "Path"
+            visible: Editor.datasetHandler.datasetCount > 0
             value: Editor.datasetHandler.datasetCount > 0 ? Editor.datasetHandler.currentDataset.path : ""
             onTextEdited: {
                 Editor.datasetHandler.currentDataset.setPath(value)

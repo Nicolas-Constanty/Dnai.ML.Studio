@@ -7,6 +7,7 @@ import Dnai.FontAwesome 1.0
 import App.Controllers 1.0
 
 Item {
+    id: _contentView
     //DATASET DELEGATE COMPONENT
     Component {
         id: _datasetComponent
@@ -17,6 +18,42 @@ Item {
             anchors.right: parent.right
             clip: true
 
+            //DATASET STATES
+            states: [
+                State{
+                    name: "Collapsed"
+                    PropertyChanges{ target: _dataset; height: 60 }
+                },
+                State{
+                    name:"Expended"
+                    PropertyChanges{ target: _dataset; height: _contentView.height - 80 }
+                }
+            ]
+            state: index == Editor.datasetHandler.currentDatasetIndex ? "Expended" : "Collapsed"
+            transitions: [
+                Transition {
+                    from: "Collapsed"
+                    to: "Expended"
+
+                   NumberAnimation {
+                       target: _dataset
+                       property: "height"
+                       duration: 150
+                       easing.type: Easing.InOutQuad
+                   }
+                },
+                Transition {
+                    from: "Expended"
+                    to: "Collapsed"
+                    NumberAnimation {
+                       target: _dataset
+                       property: "height"
+                       duration: 150
+                       easing.type: Easing.InOutQuad
+                    }
+                }
+            ]
+
             MouseArea {
                 anchors.fill: parent
                 anchors.topMargin: 1
@@ -24,7 +61,6 @@ Item {
                 anchors.leftMargin: 5
                 anchors.rightMargin: 5
                 onClicked: {
-                    _listDataset.currentIndex = index
                     Editor.datasetHandler.currentDatasetIndex = index
                 }
 
@@ -40,6 +76,24 @@ Item {
                         anchors.leftMargin: 30
                         anchors.verticalCenter: parent.verticalCenter
                         font.pointSize: 12
+                    }
+                }
+                //INFOS
+                Item {
+                    id: _infos
+                    visible: _dataset.state === "Expended"
+                    height: 100
+                    anchors.top: _header.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+
+                    Rectangle {
+                        anchors.fill: parent
+                        anchors.margins: 5
+                        color:  AppSettings.theme.colors.background.color3
+                        border.color: AppSettings.theme.colors.background.color1
+                        border.width: 1
                     }
                 }
 
@@ -71,8 +125,10 @@ Item {
                 radius: 5
             }
             highlightMoveDuration: 100
+            currentIndex: Editor.datasetHandler.currentDatasetIndex
             delegate: _datasetComponent
             spacing: 15
+            highlightResizeDuration: 50
         }
     }
 
