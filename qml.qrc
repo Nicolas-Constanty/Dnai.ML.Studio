@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qtquickcontrols2.conf</file>
+        <file>resources/EditorView.qml</file>
+        <file>resources/main.qml</file>
+        <file>resources/Datasets/DatasetTools.qml</file>
+        <file>resources/Datasets/Parameters/Import.qml</file>
+        <file>resources/Datasets/Parameters/SimpleLabeling.qml</file>
+        <file>resources/Datasets/Contents/Import.qml</file>
+        <file>resources/Datasets/Contents/SimpleLabeling.qml</file>
+        <file>resources/Templates/Tools.qml</file>
+        <file>resources/Templates/StringProperty.qml</file>
+        <file>resources/Templates/PathProperty.qml</file>
+        <file>resources/Templates/Parameters.qml</file>
+        <file>resources/Templates/TextAreaProperty.qml</file>
+    </qresource>
+</RCC>
