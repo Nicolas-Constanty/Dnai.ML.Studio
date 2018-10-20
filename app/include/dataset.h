@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "iterableqqmlpropertymap.h"
+#include "aprovider.h"
 
 class Dataset : public QObject
 {
@@ -11,8 +12,17 @@ class Dataset : public QObject
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(IterableQQmlPropertyMap *labels READ labels WRITE setLabels NOTIFY labelsChanged)
 public:
-	explicit Dataset(QObject *parent = nullptr);
-	explicit Dataset(const QString &path, QObject *parent = nullptr);
+	enum Type
+	{
+		DIR,
+		MP4,
+		CSV,
+		INVALID
+	};
+protected:
+    explicit Dataset(QObject* parent = nullptr);
+public:
+    explicit Dataset(AProvider &provider, QObject *parent = nullptr);
 
     QString name() const;
 
@@ -20,10 +30,13 @@ public:
 
     IterableQQmlPropertyMap *labels();
 
-public slots:
-    void setName(QString name);
+    Q_INVOKABLE const QSqlTableModel &data() const;
 
-    void setPath(QString path);
+
+public slots:
+    void setName(const QString& name);
+
+    void setPath(const QString& path);
 
     void setLabels(IterableQQmlPropertyMap * labels);
 
@@ -41,7 +54,7 @@ private:
 
     QQmlPropertyMap m_data;
     IterableQQmlPropertyMap m_labels;
-
+	AProvider *m_provider;
 };
 
 #endif // DATASET_H

@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QQmlListProperty>
-#include <QStringList>
 #include "dataset.h"
+#include "datasetmodel.h"
 
 class DatasetHandler : public QObject
 {
@@ -13,12 +13,13 @@ class DatasetHandler : public QObject
 	Q_PROPERTY(int datasetCount READ datasetCount NOTIFY datasetCountChanged)
 	Q_PROPERTY(int currentDatasetIndex READ currentDatasetIndex WRITE setCurrentDatasetIndex NOTIFY currentDatasetIndexChanged)
     Q_PROPERTY(Dataset *currentDataset READ currentDataset NOTIFY currentDatasetChanged)
-    Q_PROPERTY(QStringList labelNames READ labelNames WRITE setLabelNames NOTIFY labelNamesChanged)
+    Q_PROPERTY(DatasetModel *labelNames READ labelNames NOTIFY labelNamesChanged)
 
 public:
 	explicit DatasetHandler(QObject * parent = nullptr);
+	static AProvider* createProvider(const QString& path);
 
-    QQmlListProperty<Dataset> datasets();
+	QQmlListProperty<Dataset> datasets();
 	int datasetCount() const;
 
 	int currentDatasetIndex() const;
@@ -27,34 +28,35 @@ public:
 
 public:
 	Q_INVOKABLE void createDatasetFromPath(const QString & path);
-	Q_INVOKABLE static bool validFile(const QString & path);
+    Q_INVOKABLE static bool validFile(const QString & path);
     Q_INVOKABLE Dataset* dataset(int index) const;
     Q_INVOKABLE void appendDataset(Dataset* p);
 	Q_INVOKABLE void clearDatasets();
 
-    QStringList labelNames() const;
-    void setLabelNames(QStringList labelNames);
+	DatasetModel *labelNames();
+    Q_INVOKABLE void setLabelNames(const QStringList &labelNames);
 
     Q_INVOKABLE void appendLabel(const QString &label);
     Q_INVOKABLE void removeLabel(const QString &label);
     Q_INVOKABLE void setLabel(int index, const QString &label);
-    Q_INVOKABLE QString getLabel(int index);
+    Q_INVOKABLE QString getLabel(int index) const;
 	
 signals:
 	void currentDatasetIndexChanged(int index);
     void currentDatasetChanged(Dataset *dataset);
     void datasetsChanged(QQmlListProperty<Dataset> datasets);
 	void datasetCountChanged(int count);
-    void labelNamesChanged(QStringList labelNames);
+    void labelNamesChanged(const DatasetModel &labelNames);
 
 private:
     static void appendDataset(QQmlListProperty<Dataset>* list, Dataset * p);
     static void clearDatasets(QQmlListProperty<Dataset>* list);
     static Dataset *dataset(QQmlListProperty<Dataset>* list, int i);
     static int datasetCount(QQmlListProperty<Dataset>* list);
+    static Dataset::Type checkFile(const QString & path);
 
 	int m_currentDatasetIndex;
     QVector<Dataset*> m_datasets;
-    QVector<QString> m_labelNames;
+	DatasetModel m_labelNames;
 };
 #endif //DATASET_HANDLER_H

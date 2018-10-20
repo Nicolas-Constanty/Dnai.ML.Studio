@@ -1,0 +1,12 @@
+[submodule "plugins/Theme"]
+	path = plugins/Theme
+	url = https://github.com/Nicolas-Constanty/Dnai.SubModules.Libs.QtPlugins.Theme
+[submodule "plugins/Settings"]
+	path = plugins/Settings
+	url = https://github.com/Nicolas-Constanty/Dnai.SubModules.Libs.QtPlugins.Settings
+[submodule "plugins/FontAwesome"]
+	path = plugins/FontAwesome
+	url = https://github.com/Nicolas-Constanty/Dnai.SubModules.Libs.QtPlugins.FontAwesome
+[submodule "plugins/Controls"]
+	path = plugins/Controls
+	url = https://github.com/Nicolas-Constanty/Dnai.SubModules.Libs.QtPlugins.Controls

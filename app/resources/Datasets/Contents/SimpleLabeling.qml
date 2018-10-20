@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Controls 2.4
 
 import Dnai.Theme 1.0
 import Dnai.Settings 1.0
@@ -94,6 +95,54 @@ Item {
                         color:  AppSettings.theme.colors.background.color3
                         border.color: AppSettings.theme.colors.background.color1
                         border.width: 1
+//                        ListView {
+//                                id: listView
+//                                anchors.fill: parent
+
+//                                contentWidth: headerItem.width
+//                                flickableDirection: Flickable.HorizontalAndVerticalFlick
+
+//                                header: Row {
+//                                    spacing: 1
+//                                    function itemAt(index) { return repeater.itemAt(index) }
+//                                    Repeater {
+//                                        id: repeater
+//                                        model: ["Filename", "Label"]
+//                                        Label {
+//                                            text: modelData
+//                                            font.bold: true
+//                                            font.pixelSize: 20
+//                                            padding: 10
+//                                            background: Rectangle { color: "silver" }
+//                                        }
+//                                    }
+//                                }
+
+//                                model: 100
+//                                delegate: Column {
+//                                    id: delegate
+//                                    property int row: index
+//                                    Row {
+//                                        spacing: 1
+//                                        Repeater {
+//                                            model: 5
+//                                            ItemDelegate {
+//                                                property int column: index
+//                                                text: qsTr("%1x%2").arg(delegate.row).arg(column)
+//                                                width: listView.headerItem.itemAt(column).width
+//                                            }
+//                                        }
+//                                    }
+//                                    Rectangle {
+//                                        color: "silver"
+//                                        width: parent.width
+//                                        height: 1
+//                                    }
+//                                }
+
+//                                ScrollIndicator.horizontal: ScrollIndicator { }
+//                                ScrollIndicator.vertical: ScrollIndicator { }
+//                            }
                     }
                 }
 

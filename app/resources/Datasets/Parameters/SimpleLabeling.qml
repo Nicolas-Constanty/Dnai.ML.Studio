@@ -18,7 +18,7 @@ T.Parameters {
             name: "Tags"
             onRecordTag: {
                 var tlist = text.trim().split(" ")
-                Editor.datasetHandler.labelNames = tlist
+                Editor.datasetHandler.setLabelNames(tlist)
             }
         },
         Grid {
@@ -39,7 +39,7 @@ T.Parameters {
                         spacing: 4
                         Label {
                             id: _tagLabel
-                            text: modelData
+                            text: model.name
                             width: 35
                         }
                         MouseArea {

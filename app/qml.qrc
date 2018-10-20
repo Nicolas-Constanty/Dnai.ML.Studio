@@ -13,5 +13,10 @@
         <file>resources/Templates/PathProperty.qml</file>
         <file>resources/Templates/Parameters.qml</file>
         <file>resources/Templates/TextAreaProperty.qml</file>
+        <file>resources/AuthView.qml</file>
+        <file>resources/Settings/SettingsTools.qml</file>
+        <file>resources/Settings/Contents/Project.qml</file>
+        <file>resources/Settings/Contents/Docker.qml</file>
+        <file>resources/Templates/Content.qml</file>
     </qresource>
 </RCC>

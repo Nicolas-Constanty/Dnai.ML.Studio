@@ -21,13 +21,28 @@ void registerQmlTypes()
 
 }
 
+void openDatabase()
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setHostName("dnai");
+    db.setDatabaseName("mlstudio");
+    db.setUserName("user");
+    db.setPassword("dn41");
+    if (!db.open()) {
+        qWarning() << "Cannot open db!!!";
+    }
+}
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    openDatabase();
     registerQmlTypes();
     qmlRegisterType<DatasetHandler>("App.Controllers", 1, 0, "DatasetHandler");
     qmlRegisterType<Dataset>("App.Controllers", 1, 0, "Dataset");
+    qmlRegisterType<ApiHandler>("App.Controllers", 1, 0, "ApiHandler");
+    qmlRegisterType<DatasetModel>("App.Controllers", 1, 0, "DatasetModel");
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
