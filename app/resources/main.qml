@@ -21,31 +21,31 @@ ApplicationWindow {
     color: AppSettings.theme.colors.background.dark
 
     header: Row {
-        Button {
-            id: control
-            height: parent.height
-            width: height
-            contentItem: LabelAwesomeSolid {
-                text: "\uf2f6"
-                font.pointSize: 16
-                horizontalAlignment: "AlignHCenter"
-                verticalAlignment: "AlignVCenter"
-                color: AppSettings.theme.text.color
-            }
-            background: Rectangle {
-                color: Color.blend(control.checked ? AppSettings.theme.colors.background.color1 : control.hovered ? AppSettings.theme.colors.background.color3 : AppSettings.theme.colors.background.color2,
-                                                     AppSettings.theme.colors.background.base, control.down ? 0.5 : 0.0)
-            }
-            onClicked: {
-                _authView.open()
-                _authView.x = (_mainWindow.width - _authView.width) / 2
-                _authView.y = (_mainWindow.height - _authView.width + _mainWindow.header.height) / 2
-            }
-        }
+//        Button {
+//            id: control
+//            height: parent.height
+//            width: height
+//            contentItem: LabelAwesomeSolid {
+//                text: "\uf2f6"
+//                font.pointSize: 16
+//                horizontalAlignment: "AlignHCenter"
+//                verticalAlignment: "AlignVCenter"
+//                color: AppSettings.theme.text.color
+//            }
+//            background: Rectangle {
+//                color: Color.blend(control.checked ? AppSettings.theme.colors.background.color1 : control.hovered ? AppSettings.theme.colors.background.color3 : AppSettings.theme.colors.background.color2,
+//                                                     AppSettings.theme.colors.background.base, control.down ? 0.5 : 0.0)
+//            }
+//            onClicked: {
+//                _authView.open()
+//                _authView.x = (_mainWindow.width - _authView.width) / 2
+//                _authView.y = (_mainWindow.height - _authView.width + _mainWindow.header.height) / 2
+//            }
+//        }
         TabBar {
             id: tabBar
             currentIndex: swipeView.currentIndex
-            width: parent.width - parent.height
+//            width: parent.width - parent.height
             TabButton {
                 text: qsTr("Settings")
             }

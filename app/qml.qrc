@@ -18,5 +18,7 @@
         <file>resources/Settings/Contents/Project.qml</file>
         <file>resources/Settings/Contents/Docker.qml</file>
         <file>resources/Templates/Content.qml</file>
+        <file>resources/Images/Docker.png</file>
+        <file>resources/Images/Keras.png</file>
     </qresource>
 </RCC>
