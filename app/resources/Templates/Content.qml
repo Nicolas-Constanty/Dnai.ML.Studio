@@ -10,6 +10,8 @@ Item {
     property alias footer : _page.footer
     property alias header : _page.header
     property alias title : _page.title
+    property Item next
+    property Item nextButton
     Page {
         id: _page
         anchors.fill: parent
@@ -17,6 +19,17 @@ Item {
         onBackgroundChanged: {
             background.anchors.fill = background.parent
             background.anchors.margins = -15
+        }
+        footer: Item {
+            height: 40
+        }
+    }
+    onNextButtonChanged: {
+        if (nextButton)
+        {
+            _page.footer.children.push(nextButton)
+            nextButton.anchors.right = nextButton.parent.right
+            nextButton.anchors.bottom = nextButton.parent.bottom
         }
     }
 }

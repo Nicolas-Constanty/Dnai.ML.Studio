@@ -5,7 +5,7 @@ import "Contents" as Content
 import "Parameters" as Parameters
 
 T.Tools {
-
+    id: _tools
     toolsNames: ListModel {
         ListElement {
             name: "Import"
@@ -16,8 +16,20 @@ T.Tools {
     }
 
     contents: [
-        Content.Import{},
-        Content.SimpleLabeling{}
+        Content.Import{
+            nextButton: T.NextButton {
+                onClicked: {
+                    _tools.next()
+                }
+            }
+        },
+        Content.SimpleLabeling {
+            nextButton: T.NextButton {
+                onClicked: {
+                    _mainWindow.next()
+                }
+            }
+        }
     ]
 
     parameters: [

@@ -6,7 +6,14 @@ import Dnai.FontAwesome 1.0
 
 import App.Controllers 1.0
 
-Item {
+import "../../Templates" as T
+
+T.Content {
+
+    background: Rectangle {
+        id: _background
+        color: AppSettings.theme.colors.background.base
+    }
 
     //DATASET DELEGATE COMPONENT
     Component {
@@ -178,95 +185,95 @@ Item {
         }
     }
 
-    //DATASET LIST
-    Item {
-        clip: true
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: _dropAreaView.top
-        anchors.margins: 15
-        ListView {
-            id: _listDataset
-            anchors.fill: parent
-            model: Editor.datasetHandler.datasets
-            focus: true
-            highlight: Rectangle {
-                color: AppSettings.theme.colors.background.color1
-                radius: 5
+    contentChildren: [
+        //DATASET LIST
+        Item {
+            clip: true
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: _dropAreaView.top
+            anchors.margins: 15
+            ListView {
+                id: _listDataset
+                anchors.fill: parent
+                model: Editor.datasetHandler.datasets
+                focus: true
+                highlight: Rectangle {
+                    color: AppSettings.theme.colors.background.color1
+                    radius: 5
+                }
+                currentIndex: Editor.datasetHandler.currentDatasetIndex
+                highlightFollowsCurrentItem: true
+                highlightMoveDuration: 100
+                highlightResizeDuration: 50
+                delegate: _datasetComponent
+                spacing: 15
             }
-            currentIndex: Editor.datasetHandler.currentDatasetIndex
-            highlightFollowsCurrentItem: true
-            highlightMoveDuration: 100
-            highlightResizeDuration: 50
-            delegate: _datasetComponent
-            spacing: 15
-        }
-    }
+        },
+        //DROP AREA
+        Rectangle {
+            id: _dropAreaView
+            border.width: AppSettings.theme.border.width
+            border.color: AppSettings.theme.colors.background.color1
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            height: Editor.datasetHandler.datasetCount > 0 ? 100 : parent.height
+            color: AppSettings.theme.colors.background.light
 
+            //DROP LABEL
+            Label {
+                id: _dropLabel
+                anchors.centerIn: parent
+                text: "Drop dataset files here (Folder, .csv, .mp4)"
+            }
 
-    //DROP AREA
-    Rectangle {
-        id: _dropAreaView
-        border.width: AppSettings.theme.border.width
-        border.color: AppSettings.theme.colors.background.color1
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        height: Editor.datasetHandler.datasetCount > 0 ? 100 : parent.height
-        color: AppSettings.theme.colors.background.light
-
-        //DROP LABEL
-        Label {
-            id: _dropLabel
-            anchors.centerIn: parent
-            text: "Drop dataset files here (Folder, .csv, .mp4)"
-        }
-
-        //DROP AREA LOGIQUE
-        DropArea {
-            anchors.fill: parent
-            onEntered: {
-                var isValid = true
-                var partial = false
-                for (var i in drag.urls)
-                {
-                    if (!Editor.datasetHandler.validFile(drag.urls[i]))
+            //DROP AREA LOGIQUE
+            DropArea {
+                anchors.fill: parent
+                onEntered: {
+                    var isValid = true
+                    var partial = false
+                    for (var i in drag.urls)
                     {
-                        isValid = false
+                        if (!Editor.datasetHandler.validFile(drag.urls[i]))
+                        {
+                            isValid = false
+                        }
+                        else {
+                            partial = true
+                        }
                     }
-                    else {
-                        partial = true
+                    if (isValid) {
+                        _dropAreaView.color = AppSettings.theme.colors.accent.green
+                    } else if (partial) {
+                        _dropLabel.text = "Warning, some files are not supported, they will be ignored"
+                        _dropAreaView.color = AppSettings.theme.colors.accent.yellow
+                    } else {
+                        _dropLabel.text = "No supported files found in the selection, all files will be ignored"
+                        _dropAreaView.color = AppSettings.theme.colors.accent.red
                     }
-                }
-                if (isValid) {
-                    _dropAreaView.color = AppSettings.theme.colors.accent.green
-                } else if (partial) {
-                    _dropLabel.text = "Warning, some files are not supported, they will be ignored"
-                    _dropAreaView.color = AppSettings.theme.colors.accent.yellow
-                } else {
-                    _dropLabel.text = "No supported files found in the selection, all files will be ignored"
-                    _dropAreaView.color = AppSettings.theme.colors.accent.red
+
                 }
 
-            }
-
-            onDropped: {
-                for (var i in drop.urls)
-                {
-                    if (Editor.datasetHandler.validFile(drop.urls[i]))
+                onDropped: {
+                    for (var i in drop.urls)
                     {
-                        Editor.datasetHandler.createDatasetFromPath(drop.urls[i])
+                        if (Editor.datasetHandler.validFile(drop.urls[i]))
+                        {
+                            Editor.datasetHandler.createDatasetFromPath(drop.urls[i])
+                        }
                     }
+                    _dropLabel.text = "Drop dataset files here (Folder, .csv, .mp4)"
+                    _dropAreaView.color = AppSettings.theme.colors.background.light
                 }
-                _dropLabel.text = "Drop dataset files here (Folder, .csv, .mp4)"
-                _dropAreaView.color = AppSettings.theme.colors.background.light
-            }
 
-            onExited: {
-                _dropLabel.text = "Drop dataset files here (Folder, .csv, .mp4)"
-                _dropAreaView.color = AppSettings.theme.colors.background.light
+                onExited: {
+                    _dropLabel.text = "Drop dataset files here (Folder, .csv, .mp4)"
+                    _dropAreaView.color = AppSettings.theme.colors.background.light
+                }
             }
         }
-    }
+    ]
 }

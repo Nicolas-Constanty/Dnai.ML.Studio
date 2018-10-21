@@ -14,6 +14,11 @@ Item {
     property list<Item> parameters
     property ListModel toolsNames
 
+    function next() {
+        var nextIndex = control.currentIndex + 1
+        if (nextIndex < control.contentChildren.length)
+            control.currentIndex = nextIndex
+    }
 
     TabBar {
         id: control
@@ -41,7 +46,9 @@ Item {
             interactive: false
             Component.onCompleted: {
                 for (var i in _tools.contents)
+                {
                     _contents.addItem(_tools.contents[i])
+                }
             }
         }
     }

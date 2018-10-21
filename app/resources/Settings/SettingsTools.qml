@@ -4,7 +4,7 @@ import "../Templates" as T
 import "Contents" as Content
 
 T.Tools {
-
+    id: _tools
     toolsNames: ListModel {
         ListElement {
             name: "Project"
@@ -15,7 +15,19 @@ T.Tools {
     }
 
     contents: [
-        Content.Project{},
-        Content.Docker{}
+        Content.Project{
+            nextButton: T.NextButton {
+                onClicked: {
+                    _tools.next()
+                }
+            }
+        },
+        Content.Docker{
+            nextButton: T.NextButton {
+                onClicked: {
+                    _mainWindow.next()
+                }
+            }
+        }
     ]
 }

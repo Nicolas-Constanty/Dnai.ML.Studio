@@ -19,6 +19,11 @@ ApplicationWindow {
     id : _mainWindow
 
     color: AppSettings.theme.colors.background.dark
+    function next() {
+        var nextIndex = tabBar.currentIndex + 1
+        if (nextIndex < tabBar.contentChildren.length)
+            tabBar.currentIndex = nextIndex
+    }
 
     header: Row {
 //        Button {
@@ -48,6 +53,7 @@ ApplicationWindow {
 //            width: parent.width - parent.height
             TabButton {
                 text: qsTr("Settings")
+
             }
             TabButton {
                 text: qsTr("Dataset")

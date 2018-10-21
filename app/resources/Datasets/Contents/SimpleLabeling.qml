@@ -7,8 +7,14 @@ import Dnai.FontAwesome 1.0
 
 import App.Controllers 1.0
 
-Item {
+import "../../Templates" as T
+
+T.Content {
     id: _contentView
+    background: Rectangle {
+        id: _background
+        color: AppSettings.theme.colors.background.base
+    }
     //DATASET DELEGATE COMPONENT
     Component {
         id: _datasetComponent
@@ -159,26 +165,28 @@ Item {
             }
         }
     }
-    //DATASET LIST
-    Item {
-        clip: true
-        anchors.fill: parent
-        anchors.margins: 15
-        ListView {
-            id: _listDataset
+    contentChildren: [
+        //DATASET LIST
+        Item {
+            clip: true
             anchors.fill: parent
-            model: Editor.datasetHandler.datasets
-            focus: true
-            highlight: Rectangle {
-                color: AppSettings.theme.colors.background.color1
-                radius: 5
+            anchors.margins: 15
+            ListView {
+                id: _listDataset
+                anchors.fill: parent
+                model: Editor.datasetHandler.datasets
+                focus: true
+                highlight: Rectangle {
+                    color: AppSettings.theme.colors.background.color1
+                    radius: 5
+                }
+                highlightMoveDuration: 100
+                currentIndex: Editor.datasetHandler.currentDatasetIndex
+                delegate: _datasetComponent
+                spacing: 15
+                highlightResizeDuration: 50
             }
-            highlightMoveDuration: 100
-            currentIndex: Editor.datasetHandler.currentDatasetIndex
-            delegate: _datasetComponent
-            spacing: 15
-            highlightResizeDuration: 50
         }
-    }
 
+    ]
 }

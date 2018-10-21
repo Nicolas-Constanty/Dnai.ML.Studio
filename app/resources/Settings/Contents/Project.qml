@@ -26,7 +26,7 @@ T.Content {
             property bool edit: false
             padding: 0
             font.pointSize: 18
-            text: "Project n°1"
+            text: "Default project"
             onAccepted: {
                 _nameDisplay.text = text
                 _name.edit = false
@@ -47,6 +47,7 @@ T.Content {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             MouseArea {
+                cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
                 onClicked: {
                     _name.edit = true
@@ -65,6 +66,7 @@ T.Content {
             anchors.leftMargin: 20
             MouseArea {
                 anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
                 onClicked: {
                     _name.edit = true
                     _name.forceActiveFocus()

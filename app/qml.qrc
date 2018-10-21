@@ -20,5 +20,6 @@
         <file>resources/Templates/Content.qml</file>
         <file>resources/Images/Docker.png</file>
         <file>resources/Images/Keras.png</file>
+        <file>resources/Templates/NextButton.qml</file>
     </qresource>
 </RCC>
