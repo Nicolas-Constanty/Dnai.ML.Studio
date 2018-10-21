@@ -13,12 +13,12 @@
 
 DatasetHandler::DatasetHandler(QObject *parent) : QObject (parent), m_currentDatasetIndex(0), m_labelNames(nullptr, QSqlDatabase::database())
 {
-	QSqlQuery query;
-	query.exec("CREATE TABLE Labels (id int PRIMARY KEY, name varchar(40) UNIQUE)");
-	m_labelNames.setTable("Labels");
+    QSqlQuery query;
+    query.exec("CREATE TABLE Labels (id int PRIMARY KEY, name varchar(40) UNIQUE)");
+    m_labelNames.setTable("Labels");
     m_labelNames.setEditStrategy(QSqlTableModel::OnManualSubmit);
-	m_labelNames.setHeaderData(0, Qt::Horizontal, "id");
-	m_labelNames.setHeaderData(1, Qt::Horizontal, "name");
+    m_labelNames.setHeaderData(0, Qt::Horizontal, "id");
+    m_labelNames.setHeaderData(1, Qt::Horizontal, "name");
     m_labelNames.select();
     m_labelNames.generateRoles();
 }

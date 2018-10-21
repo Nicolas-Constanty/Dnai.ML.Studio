@@ -23,14 +23,7 @@ void registerQmlTypes()
 
 void openDatabase()
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setHostName("dnai");
-    db.setDatabaseName("mlstudio");
-    db.setUserName("user");
-    db.setPassword("dn41");
-    if (!db.open()) {
-        qWarning() << "Cannot open db!!!";
-    }
+
 }
 
 int main(int argc, char *argv[])

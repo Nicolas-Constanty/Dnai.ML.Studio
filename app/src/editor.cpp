@@ -21,3 +21,17 @@ Editor& Editor::instance()
 {
 	return *m_instance;
 }
+
+Project *Editor::project() const
+{
+    return m_project;
+}
+
+void Editor::setProject(Project *project)
+{
+    if (m_project == project)
+        return;
+
+    m_project = project;
+    emit projectChanged(m_project);
+}

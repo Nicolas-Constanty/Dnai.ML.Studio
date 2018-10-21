@@ -4,13 +4,14 @@
 #include <QObject>
 #include "datasethandler.h"
 #include "apihandler.h"
+#include "project.h"
 
 class Editor : public QObject
 {
 	Q_OBJECT
     Q_PROPERTY(DatasetHandler *datasetHandler READ datasetHandler CONSTANT)
     Q_PROPERTY(ApiHandler *apiHandler READ apiHandler CONSTANT)
-
+    Q_PROPERTY(Project *project READ project WRITE setProject NOTIFY projectChanged)
 public:
 	explicit Editor(QObject *parent = nullptr);
 
@@ -19,9 +20,18 @@ public:
 
 	static Editor &instance();
 
+    Project * project() const;
+
+public slots:
+    void setProject(Project * project);
+
+signals:
+    void projectChanged(Project * project);
+
 private:
     DatasetHandler m_datasetHandler;
     ApiHandler m_apiHandler;
+    Project *m_project;
 	static Editor *m_instance;
 
 };
