@@ -21,5 +21,6 @@
         <file>resources/Images/Docker.png</file>
         <file>resources/Images/Keras.png</file>
         <file>resources/Templates/NextButton.qml</file>
+        <file>resources/Templates/PrevButton.qml</file>
     </qresource>
 </RCC>

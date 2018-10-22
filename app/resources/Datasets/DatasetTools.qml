@@ -22,11 +22,21 @@ T.Tools {
                     _tools.next()
                 }
             }
+            prevButton: T.PrevButton {
+                onClicked: {
+                    _mainWindow.prev()
+                }
+            }
         },
         Content.SimpleLabeling {
             nextButton: T.NextButton {
                 onClicked: {
                     _mainWindow.next()
+                }
+            }
+            prevButton: T.PrevButton {
+                onClicked: {
+                    _tools.prev()
                 }
             }
         }

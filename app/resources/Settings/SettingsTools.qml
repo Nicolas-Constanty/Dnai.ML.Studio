@@ -7,7 +7,7 @@ T.Tools {
     id: _tools
     toolsNames: ListModel {
         ListElement {
-            name: "Project"
+            name: "Save to"
         }
         ListElement {
             name: "Docker Connection"
@@ -26,6 +26,11 @@ T.Tools {
             nextButton: T.NextButton {
                 onClicked: {
                     _mainWindow.next()
+                }
+            }
+            prevButton: T.PrevButton {
+                onClicked: {
+                    _tools.prev()
                 }
             }
         }

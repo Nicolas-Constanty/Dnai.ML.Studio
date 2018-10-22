@@ -33,7 +33,7 @@ T.Content {
                 },
                 State{
                     name:"Expended"
-                    PropertyChanges{ target: _dataset; height: _contentView.height - 80 }
+                    PropertyChanges{ target: _dataset; height: _contentView.height - 120 }
                 }
             ]
             state: index == Editor.datasetHandler.currentDatasetIndex ? "Expended" : "Collapsed"

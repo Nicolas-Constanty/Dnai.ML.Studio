@@ -20,6 +20,12 @@ Item {
             control.currentIndex = nextIndex
     }
 
+    function prev() {
+        var nextIndex = control.currentIndex - 1
+        if (nextIndex >= 0)
+            control.currentIndex = nextIndex
+    }
+
     TabBar {
         id: control
         orientation: ListView.Vertical

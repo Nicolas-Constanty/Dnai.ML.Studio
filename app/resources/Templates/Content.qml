@@ -10,8 +10,9 @@ Item {
     property alias footer : _page.footer
     property alias header : _page.header
     property alias title : _page.title
-    property Item next
     property Item nextButton
+    property Item prevButton
+
     Page {
         id: _page
         anchors.fill: parent
@@ -30,6 +31,15 @@ Item {
             _page.footer.children.push(nextButton)
             nextButton.anchors.right = nextButton.parent.right
             nextButton.anchors.bottom = nextButton.parent.bottom
+        }
+    }
+
+    onPrevButtonChanged: {
+        if (prevButton)
+        {
+            _page.footer.children.push(prevButton)
+            prevButton.anchors.left = prevButton.parent.left
+            prevButton.anchors.bottom = prevButton.parent.bottom
         }
     }
 }
