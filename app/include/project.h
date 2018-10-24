@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE static Project *defaultProject();
 
     QString description() const;
+    void operator=(const Project &proj);
 
 public slots:
     void setName(QString name);
@@ -43,6 +44,7 @@ private:
 void deserialise(const QJsonObject &obj);
 QJsonObject serialise();
 void initDB();
+QString filename();
 
 QString m_name;
 QString m_dbPath;
@@ -50,5 +52,7 @@ QString m_path;
 QSqlDatabase m_db;
 QString m_description;
 };
+
+bool operator==(const Project& lhs, const Project& rhs);
 
 #endif // PROJECT_H

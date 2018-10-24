@@ -20,7 +20,10 @@ public:
 
 	static Editor &instance();
 
-    Project * project() const;
+    Project *project() const;
+
+    Q_INVOKABLE bool loadProject(const QString &path);
+    Q_INVOKABLE void saveProject();
 
 public slots:
     void setProject(Project * project);

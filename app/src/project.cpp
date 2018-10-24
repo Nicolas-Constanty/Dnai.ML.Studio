@@ -2,6 +2,7 @@
 #include <QtDebug>
 #include <QUrl>
 #include <QJsonDocument>
+#include <QDir>
 
 #include "project.h"
 
@@ -27,10 +28,12 @@ QString Project::path() const
 
 void Project::save()
 {
-    QFile file(m_path);
-    if (!file.open(QFile::WriteOnly))
+    QFile file(filename());
+    if (!file.open(QIODevice::WriteOnly))
     {
         qWarning() << "==Project== Unable to open project file " << file.fileName() << ": " << file.errorString();
+        file.close();
+        return;
     }
     file.write(QJsonDocument(serialise()).toJson(QJsonDocument::Compact));
     qDebug() << "==Project== Project saved into " << file.fileName();
@@ -45,13 +48,14 @@ void Project::saveTo(const QString &path)
 
 Project *Project::load(const QString &path)
 {
-    QFileInfo info(QUrl(path).toLocalFile());
+    const auto p = QUrl(path).toLocalFile();
+    QFileInfo info(p);
     if (!info.exists())
     {
         qWarning() << "File doesn't exist";
         return nullptr;
     }
-    QFile file(path);
+    QFile file(p);
     if (!file.open(QFile::ReadOnly))
     {
         qWarning() << "==Project== Unable to open project file " << file.fileName() << ": " << file.errorString();
@@ -69,8 +73,8 @@ Project *Project::load(const QString &path)
             return nullptr;
         }
         auto project = new Project();
+        project->setPath(info.absolutePath());
         project->deserialise(obj);
-        project->setPath(info.path());
         project->initDB();
         return project;
     } catch (std::exception &e) {
@@ -91,6 +95,14 @@ Project *Project::defaultProject()
 QString Project::description() const
 {
     return m_description;
+}
+
+void Project::operator=(const Project &proj)
+{
+    m_name = proj.name();
+    m_description = proj.description();
+    m_dbPath = proj.dbPath();
+    m_path = proj.path();
 }
 
 void Project::setName(QString name)
@@ -115,8 +127,13 @@ void Project::setPath(QString path)
 {
     if (m_path == path)
         return;
-
-    m_path = path;
+    QFileInfo i(path);
+    if(!i.exists())
+    {
+        m_path = QUrl(path).toLocalFile();
+    }
+    else
+        m_path = path;
     emit pathChanged(m_path);
 }
 
@@ -132,6 +149,8 @@ void Project::setDescription(QString description)
 void Project::deserialise(const QJsonObject &obj)
 {
     m_name = obj["name"].toString();
+    m_description = obj["description"].toString();
+    qDebug() << "Deserialise" << m_path;
     m_dbPath = m_path + "/" + m_name + ".db";
 }
 
@@ -151,7 +170,21 @@ void Project::initDB()
     db.setDatabaseName(m_dbPath);
     db.setUserName("user");
     db.setPassword("dn41");
+    qDebug() << db.databaseName() << m_dbPath;
     if (!db.open()) {
         qWarning() << "Cannot open db!!!";
     }
+}
+
+QString Project::filename()
+{
+    return m_path + "/" + m_name + ".mlstd";
+}
+
+bool operator==(const Project& lhs, const Project& rhs) {
+    return lhs.name() == rhs.name()
+            && lhs.name() == rhs.name()
+            && lhs.path() == rhs.path()
+            && lhs.dbPath() == rhs.dbPath()
+            && lhs.description() == rhs.description();
 }

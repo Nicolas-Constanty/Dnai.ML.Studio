@@ -21,6 +21,7 @@ T.Content {
         id: _content
         height: 80
 
+        //TEXT FIELD PROJECT NAME
         TextField {
             id: _name
             property bool edit: false
@@ -28,7 +29,7 @@ T.Content {
             font.pointSize: 18
             text: "Default project"
             onAccepted: {
-                _nameDisplay.text = text
+                Editor.project.name = text
                 _name.edit = false
             }
             visible: _name.edit
@@ -38,14 +39,15 @@ T.Content {
             horizontalAlignment: "AlignHCenter"
             anchors.verticalCenter: parent.verticalCenter
         }
+        //LABEL FOR DISPLAYING PROJECT NAME
         Label {
             id: _nameDisplay
             font.pointSize: 18
-            text: "Default project"
             visible: !_name.edit
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
+            text: Editor.project.name
             MouseArea {
                 cursorShape: Qt.PointingHandCursor
                 anchors.fill: parent
@@ -55,6 +57,7 @@ T.Content {
                 }
             }
         }
+        //ICON FOR EDIT PROJECT NAME
         TextAwesomeSolid {
             id: _nameIcon
             text: "\uf304"
@@ -83,6 +86,7 @@ T.Content {
             anchors.rightMargin: 200
             spacing: 15
 
+            //PROJECT FOLDER SELECTION
             Label {
                 text: "Project folder :"
             }
@@ -97,6 +101,7 @@ T.Content {
                     anchors.right: _selectPath.left
                     anchors.rightMargin: 10
                     inputMethodHints: Qt.ImhUrlCharactersOnly
+                    text: Editor.project.path
                 }
                 Button {
                     id: _selectPath
@@ -114,16 +119,18 @@ T.Content {
                     selectFolder: true
                     selectExisting: true
                     onAccepted: {
-                        _path.text = _selectFolder.fileUrl
+                        Editor.project.path = _path.text
                     }
                 }
 
             }
+            //PROJECT DESCRIPTION
             Label {
                 text: "Description :"
             }
             TextField {
                 id: _value
+                text: Editor.project.description
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: 80
@@ -137,12 +144,12 @@ T.Content {
                     border.color: AppSettings.theme.colors.background.color3
                 }
                 onAccepted: {
-                    _value.clear()
+                    Editor.project.description = _value.text
                 }
             }
             Item {
                 id: _save
-                height: 80
+                height: 60
                 width: 200
                 anchors.horizontalCenter: parent.horizontalCenter
                 Button {
@@ -174,6 +181,60 @@ T.Content {
                         radius: 5
                     }
                     onClicked: {
+                        Editor.saveProject()
+                    }
+                }
+            }
+            Item {
+                id: _open
+                height: 30
+                width: 200
+                anchors.horizontalCenter: parent.horizontalCenter
+                Button {
+                    id: _openButton
+                    width: 200
+                    height: 30
+                    anchors.verticalCenter: parent.verticalCenter
+                    contentItem: Item {
+                        Row {
+                            height: 20
+                            spacing: 10
+                            anchors.centerIn: parent
+                            Label {
+                                text: "Open"
+                                font.pointSize: 12
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                            LabelAwesomeSolid {
+                                text: "\uf0c7"
+                                font.pointSize: 14
+                                color: AppSettings.theme.text.color
+                                anchors.verticalCenter: parent.verticalCenter
+                            }
+                        }
+                    }
+                    background: Rectangle {
+                        color: Color.blend(_openButton.checked || _openButton.highlighted ? AppSettings.theme.colors.background.dark : _openButton.hovered ? "#97cbb0" : AppSettings.theme.colors.accent.green,
+                                                                                    AppSettings.theme.colors.background.light, _openButton.down ? 0.5 : 0.0)
+                        radius: 5
+                    }
+                    onClicked: {
+                        _selectFile.open()
+                    }
+                }
+                FileDialog {
+                    id: _selectFile
+                    title: "Choose a project"
+                    folder: shortcuts["documents"]
+                    selectFolder: false
+                    selectExisting: true
+                    selectMultiple: false
+                    nameFilters: [ "project files (*.mlstd)" ]
+                    onAccepted: {
+                        if (!Editor.loadProject(_selectFile.fileUrl))
+                        {
+                            console.warn("Cannot open the projet: ", _selectFile.fileUrl)
+                        }
                     }
                 }
             }

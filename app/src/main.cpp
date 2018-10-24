@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Dataset>("App.Controllers", 1, 0, "Dataset");
     qmlRegisterType<ApiHandler>("App.Controllers", 1, 0, "ApiHandler");
     qmlRegisterType<DatasetModel>("App.Controllers", 1, 0, "DatasetModel");
+    qmlRegisterType<Project>("App.Controllers", 1, 0, "Project");
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
