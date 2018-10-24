@@ -2,5 +2,7 @@
 <RCC>
     <qresource prefix="/">
         <file alias="qtquickcontrols2.conf">qtquickcontrols2.conf</file>
+        <file alias="resources/Images/Docker.png">resources/Images/Docker.png</file>
+        <file alias="resources/Images/Keras.png">resources/Images/Keras.png</file>
     </qresource>
 </RCC>
