@@ -37,10 +37,11 @@ public:
     Q_INVOKABLE void setLabelNames(const QStringList &labelNames);
 
     Q_INVOKABLE void appendLabel(const QString &label);
-    Q_INVOKABLE void removeLabel(const QString &label);
+    Q_INVOKABLE void removeLabel(int id);
     Q_INVOKABLE void setLabel(int index, const QString &label);
     Q_INVOKABLE QString getLabel(int index) const;
-	
+
+    void initDB();
 signals:
 	void currentDatasetIndexChanged(int index);
     void currentDatasetChanged(Dataset *dataset);
@@ -57,6 +58,6 @@ private:
 
 	int m_currentDatasetIndex;
     QVector<Dataset*> m_datasets;
-	DatasetModel m_labelNames;
+    DatasetModel *m_labelNames;
 };
 #endif //DATASET_HANDLER_H

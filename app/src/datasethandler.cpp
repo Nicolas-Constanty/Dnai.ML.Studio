@@ -11,16 +11,30 @@
 #include "folderprovider.h"
 
 
-DatasetHandler::DatasetHandler(QObject *parent) : QObject (parent), m_currentDatasetIndex(0), m_labelNames(nullptr, QSqlDatabase::database())
+DatasetHandler::DatasetHandler(QObject *parent) : QObject (parent), m_currentDatasetIndex(0)
 {
+    m_labelNames = nullptr;
+}
+
+void DatasetHandler::initDB() {
+    auto n = new DatasetModel(nullptr, QSqlDatabase::database());
+    if (m_labelNames)
+    {
+        auto t = m_labelNames;
+        m_labelNames = n;
+        delete t;
+    }
+    else
+        m_labelNames = n;
     QSqlQuery query;
-    query.exec("CREATE TABLE Labels (id int PRIMARY KEY, name varchar(40) UNIQUE)");
-    m_labelNames.setTable("Labels");
-    m_labelNames.setEditStrategy(QSqlTableModel::OnManualSubmit);
-    m_labelNames.setHeaderData(0, Qt::Horizontal, "id");
-    m_labelNames.setHeaderData(1, Qt::Horizontal, "name");
-    m_labelNames.select();
-    m_labelNames.generateRoles();
+    query.exec("CREATE TABLE Labels (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
+    m_labelNames->setTable("Labels");
+    m_labelNames->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    m_labelNames->setHeaderData(0, Qt::Horizontal, "id");
+    m_labelNames->setHeaderData(1, Qt::Horizontal, "name");
+    m_labelNames->generateRoles();
+    m_labelNames->select();
+    emit labelNamesChanged(*m_labelNames);
 }
 
 AProvider *DatasetHandler::createProvider(const QString &path)
@@ -145,46 +159,42 @@ int DatasetHandler::datasetCount(QQmlListProperty<Dataset>* list) {
 
 DatasetModel *DatasetHandler::labelNames()
 {
-    return &m_labelNames;
+    return m_labelNames;
 }
 
 void DatasetHandler::appendLabel(const QString& label)
 {
 	QSqlRecord rec;
 	rec.setValue("NAME", label);
-    if (m_labelNames.insertRecord(-1, rec) && m_labelNames.submitAll())
+    if (m_labelNames->insertRecord(-1, rec) && m_labelNames->submitAll())
     {
-		emit labelNamesChanged(m_labelNames);
+        emit labelNamesChanged(*m_labelNames);
     }
 }
 
-void DatasetHandler::removeLabel(const QString& label)
+void DatasetHandler::removeLabel(const int id)
 {
-	auto q = m_labelNames.query();
-	auto i = 0;
-	while (q.next())
-	{
-		if (q.value(1).toString() == label)
-		{
-			m_labelNames.removeRow(i);
-			break;
-		}
-		i++;
-	}
-    emit labelNamesChanged(m_labelNames);
+    QSqlQuery query;
+    query.prepare("DELETE FROM Labels WHERE id = (?)");
+    query.addBindValue(id);
+    if (query.exec())
+    {
+        m_labelNames->select();
+        emit labelNamesChanged(*m_labelNames);
+    }
 }
 
 void DatasetHandler::setLabel(const int index, const QString& label)
 {
 	QSqlRecord rec;
 	rec.setValue("NAME", label);
-	if (m_labelNames.setRecord(index, rec))
-		emit labelNamesChanged(m_labelNames);
+    if (m_labelNames->setRecord(index, rec))
+        emit labelNamesChanged(*m_labelNames);
 }
 
 QString DatasetHandler::getLabel(const int index) const
 {
-    return m_labelNames.record(index).value("name").toString();
+    return m_labelNames->record(index).value("name").toString();
 }
 
 
@@ -193,18 +203,15 @@ void DatasetHandler::setLabelNames(const QStringList &labelNames)
     bool changed = false;
     for (const auto& l : labelNames)
     {
-		QSqlRecord rec;
-        rec.append(QSqlField("id", QVariant::Int));
-        rec.append(QSqlField("name", QVariant::String));
-        rec.setValue("name", QString(l));
-        if (m_labelNames.insertRecord(-1, rec))
-        {
-            qDebug() << "Insert new record" << l << rec;
-			changed = true;
-        }
+        if (l.isEmpty()) continue;
+        QSqlQuery query;
+        query.prepare("INSERT INTO Labels (name) VALUES (?)");
+        query.addBindValue(l);
+        if (query.exec())
+            changed = true;
     }
-    if (changed && m_labelNames.submitAll())
-        emit labelNamesChanged(m_labelNames);
+    if (changed && m_labelNames->submitAll())
+        emit labelNamesChanged(*m_labelNames);
 }
 
 

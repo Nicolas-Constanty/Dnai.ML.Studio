@@ -31,8 +31,8 @@ QVariant DatasetModel::data(const QModelIndex& idx, const int role) const
 	if (role < Qt::UserRole)
 	{
 		return QSqlQueryModel::data(idx, role);
-	}
-	qDebug() << "From data ====> " << record(idx.row()).value(0);
-	qDebug() << "From data ====> " << record(idx.row()).value(1);
+    }
+//    qDebug() << "From data ====> " << record(idx.row()).value(0);
+//    qDebug() << "From data ====> " << record(idx.row()).value(1);
 	return record(idx.row()).value(QString(m_roles[role]));
 }

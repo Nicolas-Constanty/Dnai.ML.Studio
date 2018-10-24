@@ -54,7 +54,7 @@ T.Parameters {
 
                             }
                             onClicked: {
-                                Editor.datasetHandler.removeLabel(modelData)
+                                Editor.datasetHandler.removeLabel(model.id)
                             }
                         }
                     }

@@ -3,7 +3,8 @@
 #include <QUrl>
 #include <QJsonDocument>
 #include <QDir>
-
+#include "editor.h"
+#include "datasethandler.h"
 #include "project.h"
 
 Project::Project(QObject *parent) : QObject (parent)
@@ -174,6 +175,7 @@ void Project::initDB()
     if (!db.open()) {
         qWarning() << "Cannot open db!!!";
     }
+    Editor::instance().datasetHandler()->initDB();
 }
 
 QString Project::filename()
