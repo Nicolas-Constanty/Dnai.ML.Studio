@@ -3,7 +3,7 @@
 
 #include "datasetmodel.h"
 
-DatasetModel::DatasetModel(QObject* parent, const QSqlDatabase& db) : QSqlTableModel(parent, db)
+DatasetModel::DatasetModel(QObject* parent, const QSqlDatabase& db) : QSqlRelationalTableModel(parent, db)
 {
 }
 

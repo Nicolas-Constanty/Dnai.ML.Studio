@@ -1,9 +1,9 @@
 #ifndef DATASET_MODEL_H
 #define DATASET_MODEL_H
 
-#include <QSqlTableModel>
+#include <QSqlRelationalTableModel>
 
-class DatasetModel : public QSqlTableModel
+class DatasetModel : public QSqlRelationalTableModel
 {
 	Q_OBJECT
 public:

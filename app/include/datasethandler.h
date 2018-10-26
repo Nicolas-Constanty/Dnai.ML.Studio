@@ -9,7 +9,7 @@
 class DatasetHandler : public QObject
 {
 	Q_OBJECT
-	Q_PROPERTY(QQmlListProperty<Dataset> datasets READ datasets NOTIFY datasetsChanged)
+    Q_PROPERTY(DatasetModel *datasets READ datasets NOTIFY datasetsChanged)
 	Q_PROPERTY(int datasetCount READ datasetCount NOTIFY datasetCountChanged)
 	Q_PROPERTY(int currentDatasetIndex READ currentDatasetIndex WRITE setCurrentDatasetIndex NOTIFY currentDatasetIndexChanged)
     Q_PROPERTY(Dataset *currentDataset READ currentDataset NOTIFY currentDatasetChanged)
@@ -19,7 +19,7 @@ public:
 	explicit DatasetHandler(QObject * parent = nullptr);
 	static AProvider* createProvider(const QString& path);
 
-	QQmlListProperty<Dataset> datasets();
+    DatasetModel *datasets();
 	int datasetCount() const;
 
 	int currentDatasetIndex() const;
@@ -45,19 +45,21 @@ public:
 signals:
 	void currentDatasetIndexChanged(int index);
     void currentDatasetChanged(Dataset *dataset);
-    void datasetsChanged(QQmlListProperty<Dataset> datasets);
+    void datasetsChanged(DatasetModel *datasets);
 	void datasetCountChanged(int count);
-    void labelNamesChanged(const DatasetModel &labelNames);
+    void labelNamesChanged(DatasetModel *labelNames);
 
 private:
-    static void appendDataset(QQmlListProperty<Dataset>* list, Dataset * p);
-    static void clearDatasets(QQmlListProperty<Dataset>* list);
-    static Dataset *dataset(QQmlListProperty<Dataset>* list, int i);
-    static int datasetCount(QQmlListProperty<Dataset>* list);
+//    static void appendDataset(QQmlListProperty<Dataset>* list, Dataset * p);
+//    static void clearDatasets(QQmlListProperty<Dataset>* list);
+//    static Dataset *dataset(QQmlListProperty<Dataset>* list, int i);
+//    static int datasetCount(QQmlListProperty<Dataset>* list);
     static Dataset::Type checkFile(const QString & path);
+    void initDatasets();
+    void initLabels();
 
 	int m_currentDatasetIndex;
-    QVector<Dataset*> m_datasets;
+    DatasetModel *m_datasets;
     DatasetModel *m_labelNames;
 };
 #endif //DATASET_HANDLER_H

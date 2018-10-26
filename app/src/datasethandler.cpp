@@ -14,9 +14,21 @@
 DatasetHandler::DatasetHandler(QObject *parent) : QObject (parent), m_currentDatasetIndex(0)
 {
     m_labelNames = nullptr;
+    m_datasets = nullptr;
 }
 
 void DatasetHandler::initDB() {
+
+    QSqlQuery query;
+    query.exec("CREATE TABLE Providers (id int PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
+    initLabels();
+    query.exec("CREATE TABLE Entry (id int PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, filename varchar(128) UNIQUE, labelId int, datasetId int)");
+    initDatasets();
+}
+
+
+void DatasetHandler::initLabels()
+{
     auto n = new DatasetModel(nullptr, QSqlDatabase::database());
     if (m_labelNames)
     {
@@ -26,15 +38,41 @@ void DatasetHandler::initDB() {
     }
     else
         m_labelNames = n;
+
     QSqlQuery query;
-    query.exec("CREATE TABLE Labels (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
+    query.exec("CREATE TABLE Labels (id int PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
     m_labelNames->setTable("Labels");
     m_labelNames->setEditStrategy(QSqlTableModel::OnManualSubmit);
     m_labelNames->setHeaderData(0, Qt::Horizontal, "id");
     m_labelNames->setHeaderData(1, Qt::Horizontal, "name");
     m_labelNames->generateRoles();
     m_labelNames->select();
-    emit labelNamesChanged(*m_labelNames);
+    emit labelNamesChanged(m_labelNames);
+}
+
+void DatasetHandler::initDatasets()
+{
+    auto n = new DatasetModel(nullptr, QSqlDatabase::database());
+    if (m_datasets)
+    {
+        auto t = m_datasets;
+        m_datasets = n;
+        delete t;
+    }
+    else
+        m_datasets = n;
+    QSqlQuery query;
+    query.exec("CREATE TABLE Datasets (id int PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE, path varchar(256), providerId int)");
+
+    m_datasets->setTable("Datasets");
+    m_datasets->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    m_datasets->setHeaderData(0, Qt::Horizontal, "id");
+    m_datasets->setHeaderData(1, Qt::Horizontal, "name");
+    m_datasets->setHeaderData(2, Qt::Horizontal, "path");
+    m_datasets->setHeaderData(3, Qt::Horizontal, "providerId");
+    m_datasets->generateRoles();
+    m_datasets->select();
+    emit datasetsChanged(m_datasets);
 }
 
 AProvider *DatasetHandler::createProvider(const QString &path)
@@ -58,12 +96,12 @@ AProvider *DatasetHandler::createProvider(const QString &path)
 
 void DatasetHandler::createDatasetFromPath(const QString &path)
 {
-	const auto provider = createProvider(path);
-	if (!provider) return;
-    auto dataset = new Dataset(*provider);
-	const auto datasetName = QString("Dataset n° ") + QString::number(m_datasets.count() + 1);
-    dataset->setName(datasetName);
-    appendDataset(dataset);
+//	const auto provider = createProvider(path);
+//	if (!provider) return;
+//    auto dataset = new Dataset(*provider);
+//	const auto datasetName = QString("Dataset n° ") + QString::number(m_datasets.count() + 1);
+//    dataset->setName(datasetName);
+//    appendDataset(dataset);
 }
 
 bool DatasetHandler::validFile(const QString &path)
@@ -97,9 +135,10 @@ int DatasetHandler::currentDatasetIndex() const
 
 Dataset *DatasetHandler::currentDataset() const
 {
-    if (m_currentDatasetIndex >= m_datasets.count())
-        return nullptr;
-    return m_datasets[m_currentDatasetIndex];
+    return nullptr;
+//    if (m_currentDatasetIndex >= m_datasets.count())
+//        return nullptr;
+//    return m_datasets[m_currentDatasetIndex];
 }
 
 void DatasetHandler::setCurrentDatasetIndex(const int currentDatasetIndex)
@@ -112,50 +151,55 @@ void DatasetHandler::setCurrentDatasetIndex(const int currentDatasetIndex)
     emit currentDatasetChanged(currentDataset());
 }
 
-QQmlListProperty<Dataset> DatasetHandler::datasets()
+DatasetModel *DatasetHandler::datasets()
 {
-    return QQmlListProperty<Dataset>(this, this,
-             &DatasetHandler::appendDataset,
-             &DatasetHandler::datasetCount,
-             &DatasetHandler::dataset,
-             &DatasetHandler::clearDatasets);
+    return m_datasets;
 }
 
+//QQmlListProperty<Dataset> DatasetHandler::datasets()
+//{
+//    return QQmlListProperty<Dataset>(this, this,
+//             &DatasetHandler::appendDataset,
+//             &DatasetHandler::datasetCount,
+//             &DatasetHandler::dataset,
+//             &DatasetHandler::clearDatasets);
+//}
+
 void DatasetHandler::appendDataset(Dataset* p) {
-    m_datasets.append(p);
+    //m_datasets.append(p);
     emit datasetsChanged(datasets());
-    emit datasetCountChanged(m_datasets.count());
+    //emit datasetCountChanged(m_datasets.count());
 }
 
 Dataset *DatasetHandler::dataset(const int index) const
 {
-    return m_datasets.at(index);
+    return nullptr;//m_datasets.at(index);
 }
 
 void DatasetHandler::clearDatasets() {
-    m_datasets.clear();
+//    m_datasets.clear();
 }
 
 int DatasetHandler::datasetCount() const
 {
-    return m_datasets.count();
+    return -1;//m_datasets.count();
 }
 
-void DatasetHandler::appendDataset(QQmlListProperty<Dataset>* list, Dataset* p) {
-    reinterpret_cast< DatasetHandler* >(list->data)->appendDataset(p);
-}
+//void DatasetHandler::appendDataset(QQmlListProperty<Dataset>* list, Dataset* p) {
+//    reinterpret_cast< DatasetHandler* >(list->data)->appendDataset(p);
+//}
 
-void DatasetHandler::clearDatasets(QQmlListProperty<Dataset>* list) {
-    reinterpret_cast< DatasetHandler* >(list->data)->clearDatasets();
-}
+//void DatasetHandler::clearDatasets(QQmlListProperty<Dataset>* list) {
+//    reinterpret_cast< DatasetHandler* >(list->data)->clearDatasets();
+//}
 
-Dataset* DatasetHandler::dataset(QQmlListProperty<Dataset>* list, int i) {
-    return reinterpret_cast< DatasetHandler* >(list->data)->dataset(i);
-}
+//Dataset* DatasetHandler::dataset(QQmlListProperty<Dataset>* list, int i) {
+//    return reinterpret_cast< DatasetHandler* >(list->data)->dataset(i);
+//}
 
-int DatasetHandler::datasetCount(QQmlListProperty<Dataset>* list) {
-    return reinterpret_cast< DatasetHandler* >(list->data)->datasetCount();
-}
+//int DatasetHandler::datasetCount(QQmlListProperty<Dataset>* list) {
+//    return reinterpret_cast< DatasetHandler* >(list->data)->datasetCount();
+//}
 
 DatasetModel *DatasetHandler::labelNames()
 {
@@ -168,7 +212,7 @@ void DatasetHandler::appendLabel(const QString& label)
 	rec.setValue("NAME", label);
     if (m_labelNames->insertRecord(-1, rec) && m_labelNames->submitAll())
     {
-        emit labelNamesChanged(*m_labelNames);
+        emit labelNamesChanged(m_labelNames);
     }
 }
 
@@ -180,7 +224,7 @@ void DatasetHandler::removeLabel(const int id)
     if (query.exec())
     {
         m_labelNames->select();
-        emit labelNamesChanged(*m_labelNames);
+        emit labelNamesChanged(m_labelNames);
     }
 }
 
@@ -189,7 +233,7 @@ void DatasetHandler::setLabel(const int index, const QString& label)
 	QSqlRecord rec;
 	rec.setValue("NAME", label);
     if (m_labelNames->setRecord(index, rec))
-        emit labelNamesChanged(*m_labelNames);
+        emit labelNamesChanged(m_labelNames);
 }
 
 QString DatasetHandler::getLabel(const int index) const
@@ -211,7 +255,7 @@ void DatasetHandler::setLabelNames(const QStringList &labelNames)
             changed = true;
     }
     if (changed && m_labelNames->submitAll())
-        emit labelNamesChanged(*m_labelNames);
+        emit labelNamesChanged(m_labelNames);
 }
 
 
