@@ -119,7 +119,8 @@ T.Content {
                     selectFolder: true
                     selectExisting: true
                     onAccepted: {
-                        Editor.project.path = _path.text
+                        console.log(_selectFolder.fileUrl)
+                        Editor.project.path = _selectFolder.fileUrl
                     }
                 }
 
