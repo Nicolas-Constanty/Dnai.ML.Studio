@@ -39,6 +39,9 @@ int main(int argc, char *argv[])
     qmlRegisterType<Project>("App.Controllers", 1, 0, "Project");
     QGuiApplication app(argc, argv);
 
+    app.setOrganizationName("SaltyStudio");
+    app.setOrganizationDomain("dnai.io");
+    app.setApplicationName("ML Studio");
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/resources/main.qml")));
     if (engine.rootObjects().isEmpty())
