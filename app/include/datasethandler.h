@@ -49,17 +49,20 @@ signals:
 	void datasetCountChanged(int count);
     void labelNamesChanged(DatasetModel *labelNames);
 
+private slots:
 private:
-//    static void appendDataset(QQmlListProperty<Dataset>* list, Dataset * p);
-//    static void clearDatasets(QQmlListProperty<Dataset>* list);
-//    static Dataset *dataset(QQmlListProperty<Dataset>* list, int i);
-//    static int datasetCount(QQmlListProperty<Dataset>* list);
     static Dataset::Type checkFile(const QString & path);
-    void initDatasets();
-    void initLabels();
 
 	int m_currentDatasetIndex;
     DatasetModel *m_datasets;
     DatasetModel *m_labelNames;
+    bool createDatasetEntry(Dataset::Type t, const QString &path);
+
+    // INIT DB FUNCTIONS
+    void initProvider();
+    void initLabels();
+    void initEntry();
+    void initDatasets();
+
 };
 #endif //DATASET_HANDLER_H
