@@ -19,11 +19,26 @@ DatasetHandler::DatasetHandler(QObject *parent) : QObject (parent), m_currentDat
 
 void DatasetHandler::initDB() {
 
-    QSqlQuery query;
-    query.exec("CREATE TABLE Providers (id int PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
+    initProvider();
     initLabels();
-    query.exec("CREATE TABLE Entry (id int PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, filename varchar(128) UNIQUE, labelId int, datasetId int)");
     initDatasets();
+    qDebug() << QSqlDatabase::database().tables();
+}
+
+void DatasetHandler::initProvider()
+{
+    QSqlQuery query;
+    query.exec("CREATE TABLE Providers (id integer PRIMARY KEY, name varchar(40) UNIQUE)");
+
+    query.exec("INSERT INTO Providers VALUES (0, 'Folder')");
+    query.exec("INSERT INTO Providers VALUES (1, 'Video')");
+    query.exec("INSERT INTO Providers VALUES (2, 'CSV')");
+}
+
+void DatasetHandler::initEntry()
+{
+    QSqlQuery query;
+    query.exec("CREATE TABLE Entry (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, filename varchar(128) UNIQUE, labelId integer, datasetId integer)");
 }
 
 
@@ -40,8 +55,8 @@ void DatasetHandler::initLabels()
         m_labelNames = n;
 
     QSqlQuery query;
-    query.exec("CREATE TABLE Labels (id int PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
-    m_labelNames->setTable("Labels");
+    query.exec("CREATE TABLE Labels (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
+    m_labelNames->setTable("Labels"); 
     m_labelNames->setEditStrategy(QSqlTableModel::OnManualSubmit);
     m_labelNames->setHeaderData(0, Qt::Horizontal, "id");
     m_labelNames->setHeaderData(1, Qt::Horizontal, "name");
@@ -62,9 +77,10 @@ void DatasetHandler::initDatasets()
     else
         m_datasets = n;
     QSqlQuery query;
-    query.exec("CREATE TABLE Datasets (id int PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE, path varchar(256), providerId int)");
+    query.exec("CREATE TABLE Datasets (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE, path varchar(256), providerId integer)");
 
     m_datasets->setTable("Datasets");
+    m_datasets->setRelation(3, QSqlRelation("Providers", "id", "name"));
     m_datasets->setEditStrategy(QSqlTableModel::OnManualSubmit);
     m_datasets->setHeaderData(0, Qt::Horizontal, "id");
     m_datasets->setHeaderData(1, Qt::Horizontal, "name");
@@ -72,7 +88,10 @@ void DatasetHandler::initDatasets()
     m_datasets->setHeaderData(3, Qt::Horizontal, "providerId");
     m_datasets->generateRoles();
     m_datasets->select();
+
+
     emit datasetsChanged(m_datasets);
+    emit datasetCountChanged(m_datasets->rowCount());
 }
 
 AProvider *DatasetHandler::createProvider(const QString &path)
@@ -96,12 +115,24 @@ AProvider *DatasetHandler::createProvider(const QString &path)
 
 void DatasetHandler::createDatasetFromPath(const QString &path)
 {
-//	const auto provider = createProvider(path);
-//	if (!provider) return;
-//    auto dataset = new Dataset(*provider);
-//	const auto datasetName = QString("Dataset n° ") + QString::number(m_datasets.count() + 1);
-//    dataset->setName(datasetName);
-//    appendDataset(dataset);
+    auto datasetType = checkFile(path);
+    if (!createDatasetEntry(datasetType, path)) {
+        qWarning() << "Cannot create new dataset entry with path : " << path;
+        return;
+    }
+    m_datasets->submitAll();
+    emit datasetsChanged(m_datasets);
+    emit datasetCountChanged(m_datasets->rowCount());
+}
+
+bool DatasetHandler::createDatasetEntry(Dataset::Type t, const QString & path)
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO Datasets (name, path, providerID) VALUES (?, ?, ?)");
+    query.addBindValue(QString("Dataset n° ") + QString::number(m_datasets->rowCount() + 1));
+    query.addBindValue(path);
+    query.addBindValue(t);
+    return query.exec();
 }
 
 bool DatasetHandler::validFile(const QString &path)
@@ -182,7 +213,7 @@ void DatasetHandler::clearDatasets() {
 
 int DatasetHandler::datasetCount() const
 {
-    return -1;//m_datasets.count();
+    return m_datasets ? m_datasets->rowCount() : -1;//m_datasets.count();
 }
 
 //void DatasetHandler::appendDataset(QQmlListProperty<Dataset>* list, Dataset* p) {

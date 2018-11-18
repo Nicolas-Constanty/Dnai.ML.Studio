@@ -168,6 +168,7 @@ void Project::initDB()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setHostName("dnai");
+    qDebug() << m_dbPath;
     db.setDatabaseName(m_dbPath);
     db.setUserName("user");
     db.setPassword("dn41");
