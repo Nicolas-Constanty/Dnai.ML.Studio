@@ -197,7 +197,7 @@ T.Content {
             ListView {
                 id: _listDataset
                 anchors.fill: parent
-                model: Editor.datasetHandler.datasets
+                model: Editor.databaseHandler.datasets
                 focus: true
                 highlight: Rectangle {
                     color: AppSettings.theme.colors.background.color1
@@ -219,7 +219,7 @@ T.Content {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            height: Editor.datasetHandler.datasetCount > 0 ? 100 : parent.height
+            height: Editor.databaseHandler.datasets == null || Editor.databaseHandler.datasets.count < 1 ? parent.height : 100
             color: AppSettings.theme.colors.background.light
 
             //DROP LABEL

@@ -33,9 +33,10 @@ int main(int argc, char *argv[])
     openDatabase();
     registerQmlTypes();
     qmlRegisterType<DatasetHandler>("App.Controllers", 1, 0, "DatasetHandler");
+    qmlRegisterType<DatabaseHandler>("App.Controllers", 1, 0, "DatabaseHandler");
     qmlRegisterType<Dataset>("App.Controllers", 1, 0, "Dataset");
     qmlRegisterType<ApiHandler>("App.Controllers", 1, 0, "ApiHandler");
-    qmlRegisterType<DatasetModel>("App.Controllers", 1, 0, "DatasetModel");
+    qmlRegisterType<TableModel>("App.Controllers", 1, 0, "TableModel");
     qmlRegisterType<Project>("App.Controllers", 1, 0, "Project");
     QGuiApplication app(argc, argv);
 

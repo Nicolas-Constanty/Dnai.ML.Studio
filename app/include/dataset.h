@@ -2,6 +2,7 @@
 #define DATASET_H
 
 #include <QObject>
+#include <QSqlRecord>
 #include "iterableqqmlpropertymap.h"
 #include "aprovider.h"
 
@@ -23,6 +24,8 @@ protected:
     explicit Dataset(QObject* parent = nullptr);
 public:
     explicit Dataset(AProvider &provider, QObject *parent = nullptr);
+
+    void initFromRecord(QSqlRecord *record);
 
     QString name() const;
 
@@ -54,7 +57,7 @@ private:
 
     QQmlPropertyMap m_data;
     IterableQQmlPropertyMap m_labels;
-	AProvider *m_provider;
+    AProvider *m_provider;
 };
 
 #endif // DATASET_H

@@ -23,7 +23,8 @@ SOURCES += \
     src/folderprovider.cpp \
     src/aprovider.cpp \
     src/datasetmodel.cpp \
-    src/project.cpp
+    src/project.cpp \
+    src/databasehandler.cpp
 
 RESOURCES += qml.qrc
 
@@ -49,7 +50,8 @@ HEADERS += \
     include/apihandler.h \
     include/folderprovider.h \
     include/datasetmodel.h \
-    include/project.h
+    include/project.h \
+    include/databasehandler.h
 
 DISTFILES += \
     dark.json

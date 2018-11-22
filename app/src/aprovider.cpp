@@ -26,20 +26,10 @@ QString AProvider::toCsv()
 	return textData;
 }
 
-const QString& AProvider::path() const
-{
-	return m_path;
-}
-
-void AProvider::setPath(const QString& path)
-{
-	m_path = path;
-}
-
 void AProvider::updateProvider(const QString& name)
 {
 	initModel(name);
-	generateModel();
+//	generateModel();
 }
 
 void AProvider::updateProviderFromCsv(const QString& name, const QString& csvPath)

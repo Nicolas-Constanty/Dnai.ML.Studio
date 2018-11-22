@@ -5,7 +5,7 @@
 
 class AProvider {
 public:
-	explicit AProvider(const QString &path) : m_data(nullptr, QSqlDatabase::database()), m_path(path), m_init(false)
+    explicit AProvider() : m_data(nullptr, QSqlDatabase::database()), m_init(false)
 	{
 	}
 
@@ -13,20 +13,20 @@ public:
 
     virtual const QSqlTableModel& data() const;
 	virtual QString toCsv();
-	const QString& path() const;
-	void setPath(const QString& path);
+//	const QString& path() const;
+//	void setPath(const QString& path);
 
 	void updateProvider(const QString &name);
 	void updateProviderFromCsv(const QString &name, const QString &csvPath);
 
+    virtual void generateModel(const QString &path, int datasetId) = 0;
+
 protected:
 	virtual void initModel(const QString& name) = 0;
-	virtual void generateModel() = 0;
 	void generateModelFromCsv(const QString& path);
 
 protected:
     QSqlTableModel m_data;
-	QString m_path;
 	bool m_init;
 };
 

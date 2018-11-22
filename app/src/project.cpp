@@ -166,17 +166,7 @@ QJsonObject Project::serialise()
 
 void Project::initDB()
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setHostName("dnai");
-    qDebug() << m_dbPath;
-    db.setDatabaseName(m_dbPath);
-    db.setUserName("user");
-    db.setPassword("dn41");
-    qDebug() << db.databaseName() << m_dbPath;
-    if (!db.open()) {
-        qWarning() << "Cannot open db!!!";
-    }
-    Editor::instance().datasetHandler()->initDB();
+    Editor::instance().databaseHandler()->initDatabases(m_dbPath);
 }
 
 QString Project::filename()

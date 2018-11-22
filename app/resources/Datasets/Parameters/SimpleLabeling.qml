@@ -18,7 +18,7 @@ T.Parameters {
             name: "Tags"
             onRecordTag: {
                 var tlist = text.trim().split(" ")
-                Editor.datasetHandler.setLabelNames(tlist)
+                Editor.databaseHandler.setLabelNames(tlist)
             }
         },
         Grid {
@@ -28,7 +28,7 @@ T.Parameters {
             anchors.left: parent.left
             anchors.right: parent.right
             Repeater {
-                model: Editor.datasetHandler.labelNames
+                model: Editor.databaseHandler.labels
                 delegate: Rectangle {
                     width: _r.width + 10
                     height: 18
@@ -54,7 +54,7 @@ T.Parameters {
 
                             }
                             onClicked: {
-                                Editor.datasetHandler.removeLabel(model.id)
+                                Editor.databaseHandler.removeLabel(model.id)
                             }
                         }
                     }

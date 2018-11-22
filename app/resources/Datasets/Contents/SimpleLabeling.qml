@@ -174,7 +174,7 @@ T.Content {
             ListView {
                 id: _listDataset
                 anchors.fill: parent
-                model: Editor.datasetHandler.datasets
+                model: Editor.databaseHandler.datasets
                 focus: true
                 highlight: Rectangle {
                     color: AppSettings.theme.colors.background.color1

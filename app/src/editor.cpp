@@ -6,6 +6,7 @@ Editor::Editor(QObject* parent) : QObject(parent)
 	if (!m_instance)
 		m_instance = this;
     m_project = Project::defaultProject();
+    m_datasetHandler.initDatabaseHandler();
 }
 
 DatasetHandler* Editor::datasetHandler()
@@ -47,6 +48,11 @@ bool Editor::loadProject(const QString &path)
 void Editor::saveProject()
 {
     m_project->save();
+}
+
+DatabaseHandler *Editor::databaseHandler()
+{
+    return &m_databaseHandler;
 }
 
 void Editor::setProject(Project *project)

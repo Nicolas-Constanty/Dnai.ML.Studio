@@ -7,6 +7,7 @@ import App.Controllers 1.0
 import "../../Templates" as T
 
 T.Parameters {
+    property TableModel model: Editor.databaseHandler.datasets
     anchors.margins: 10
     //HEADER
     title: "Import properties"
@@ -15,8 +16,8 @@ T.Parameters {
         //NAME PROPERTY
         T.StringProperty {
             name: "Name"
-            visible: Editor.datasetHandler.datasetCount > 0
-            value: Editor.datasetHandler.datasetCount > 0 ? Editor.datasetHandler.currentDataset.name : ""
+            visible: Editor.databaseHandler.datasets != null && Editor.databaseHandler.datasets.count > 0
+            value: visible ? model.data(model.index(Editor.datasetHandler.currentDatasetIndex, 0), model.getRoles("name")) : ""
             onTextEdited: {
                 Editor.datasetHandler.currentDataset.setName(value)
             }
@@ -24,8 +25,8 @@ T.Parameters {
         //PATH PROPERTY
         T.PathProperty {
             name: "Path"
-            visible: Editor.datasetHandler.datasetCount > 0
-            value: Editor.datasetHandler.datasetCount > 0 ? Editor.datasetHandler.currentDataset.path : ""
+            visible: Editor.databaseHandler.datasets != null && Editor.databaseHandler.datasets.count > 0
+            value: visible ? model.data(model.index(Editor.datasetHandler.currentDatasetIndex, 0), model.getRoles("path")) : ""
             onTextEdited: {
                 Editor.datasetHandler.currentDataset.setPath(value)
             }

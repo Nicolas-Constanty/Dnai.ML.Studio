@@ -5,13 +5,13 @@
 
 class FolderProvider : public AProvider {
 public:
-	explicit FolderProvider(const QString& path)
-		: AProvider(path)
+    explicit FolderProvider()
+        : AProvider()
 	{
 	}
+    void generateModel(const QString &path, int datasetId) override;
 
 protected:
-	void generateModel() override;
 	void initModel(const QString& name) override;
 };
 

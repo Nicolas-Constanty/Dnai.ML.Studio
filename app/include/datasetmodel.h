@@ -1,21 +1,39 @@
 #ifndef DATASET_MODEL_H
 #define DATASET_MODEL_H
 
+#include <QVariantMap>
 #include <QSqlRelationalTableModel>
 
-class DatasetModel : public QSqlRelationalTableModel
+class TableModel : public QSqlRelationalTableModel
 {
 	Q_OBJECT
-public:
-	explicit DatasetModel(QObject * parent = nullptr, const QSqlDatabase& db = QSqlDatabase());
+    Q_PROPERTY(int count READ count WRITE setCount NOTIFY countChanged)
 
+public:
+    explicit TableModel(QObject * parent = nullptr, const QSqlDatabase& db = QSqlDatabase());
+
+    Q_INVOKABLE int getRoles(const QByteArray &role);
 	void generateRoles();
 
 	QHash<int, QByteArray> roleNames() const override;
 	QVariant data(const QModelIndex& idx, int role) const override;
-private:
-	QHash<int, QByteArray> m_roles;
 
+    //    Q_INVOKABLE QVariantMap operator[](int) const;
+    int count() const;
+
+public slots:
+    void setCount(int count);
+    void updateCount(QSqlRecord &model);
+    void updateCount();
+
+signals:
+    void countChanged(int count);
+
+private:
+    QHash<int, QByteArray> m_roles;
+
+    void updateMap();
+    int m_count;
 };
 
 #endif //DATASET_MODEL_H

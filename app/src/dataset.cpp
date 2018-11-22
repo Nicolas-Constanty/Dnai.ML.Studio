@@ -1,3 +1,5 @@
+#include <QSqlField>
+
 #include "dataset.h"
 #include "datasethandler.h"
 
@@ -10,6 +12,15 @@ Dataset::Dataset(AProvider &provider, QObject* parent) : QObject(parent), m_prov
 {
 }
 
+void Dataset::initFromRecord(QSqlRecord *record)
+{
+    for (auto i = 0; i < record->count(); i++)
+    {
+        auto field = record->field(i);
+        m_data[field.name()] = field.value();
+    }
+}
+
 QString Dataset::name() const
 {
     return  m_data["name"].toString();
@@ -17,7 +28,7 @@ QString Dataset::name() const
 
 QString Dataset::path() const
 {
-    return m_provider->path();
+    return "";//m_provider->path();
 }
 
 IterableQQmlPropertyMap* Dataset::labels()
@@ -34,7 +45,7 @@ void Dataset::setName(const QString& name)
 
 void Dataset::setPath(const QString& path)
 {
-	m_provider->setPath(path);
+//	m_provider->setPath(path);
 	const auto temp = &m_provider;
 	m_provider = DatasetHandler::createProvider(path);
 	m_provider->updateProvider(name());
