@@ -38,6 +38,8 @@ public:
 private:
     virtual QHash<int, QByteArray> roleNames() const override;
 
+    void emitValueChanged(const QString &key, const QVariant &value);
+
 signals:
     void valueChanged(const QString &key, const QVariant &value);
 

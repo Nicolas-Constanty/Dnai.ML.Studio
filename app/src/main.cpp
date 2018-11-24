@@ -34,19 +34,20 @@ int main(int argc, char *argv[])
     registerQmlTypes();
     qmlRegisterType<DatasetHandler>("App.Controllers", 1, 0, "DatasetHandler");
     qmlRegisterType<DatabaseHandler>("App.Controllers", 1, 0, "DatabaseHandler");
-    qmlRegisterType<Dataset>("App.Controllers", 1, 0, "Dataset");
+//    qmlRegisterType<Dataset>("App.Controllers", 1, 0, "Dataset");
     qmlRegisterType<ApiHandler>("App.Controllers", 1, 0, "ApiHandler");
     qmlRegisterType<TableModel>("App.Controllers", 1, 0, "TableModel");
     qmlRegisterType<Project>("App.Controllers", 1, 0, "Project");
     QGuiApplication app(argc, argv);
 
-    app.setOrganizationName("SaltyStudio");
-    app.setOrganizationDomain("dnai.io");
-    app.setApplicationName("ML Studio");
+    QGuiApplication::setOrganizationName("SaltyStudio");
+    QGuiApplication::setOrganizationDomain("dnai.io");
+    QGuiApplication::setApplicationName("ML Studio");
+
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/resources/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 
-    return app.exec();
+    return QGuiApplication::exec();
 }

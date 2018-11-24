@@ -16,10 +16,21 @@ T.Parameters {
         //NAME PROPERTY
         T.StringProperty {
             name: "Name"
+            property var fold: Editor.databaseHandler.entries
             visible: Editor.databaseHandler.datasets != null && Editor.databaseHandler.datasets.count > 0
             value: visible ? model.data(model.index(Editor.datasetHandler.currentDatasetIndex, 0), model.getRoles("name")) : ""
             onTextEdited: {
                 Editor.datasetHandler.currentDataset.setName(value)
+            }
+            onFoldChanged: {
+                console.log("Entries")
+                Editor.databaseHandler.entries.display()
+                console.log("==========")
+                Editor.databaseHandler.entries.setFilter("datasetId=1")
+                Editor.databaseHandler.entries.display()
+                console.log("==========")
+                Editor.databaseHandler.entries.setFilter("datasetId=2")
+                Editor.databaseHandler.entries.display()
             }
         },
         //PATH PROPERTY

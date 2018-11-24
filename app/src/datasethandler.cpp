@@ -11,7 +11,7 @@
 #include "folderprovider.h"
 #include "editor.h"
 
-AProvider *DatasetHandler::providers[] = {
+QVector<AProvider *> DatasetHandler::providers = {
     new FolderProvider()
 };
 
@@ -70,6 +70,30 @@ void DatasetHandler::createDatasetFromPath(const QString &path)
 
     m_dbh->datasets()->submitAll();
     m_dbh->entries()->submitAll();
+
+    m_folders.append(m_dbh->createFolderEntries(m_dbh->datasets()->rowCount()));
+}
+
+
+int DatasetHandler::foldersCount() const
+{
+    return m_folders.count();
+}
+
+void DatasetHandler::appendFolder(QQmlListProperty<TableModel>* list, TableModel* p) {
+    static_cast< DatasetHandler* >(list->data)->appendFolder(p);
+}
+
+void DatasetHandler::clearFolders(QQmlListProperty<TableModel>* list) {
+    static_cast< DatasetHandler* >(list->data)->clearFolders();
+}
+
+TableModel* DatasetHandler::folder(QQmlListProperty<TableModel>* list, int i) {
+    return static_cast< DatasetHandler* >(list->data)->folder(i);
+}
+
+int DatasetHandler::foldersCount(QQmlListProperty<TableModel>* list) {
+    return static_cast< DatasetHandler* >(list->data)->foldersCount();
 }
 
 bool DatasetHandler::createDatasetEntry(Dataset::Type t, const QString & path)
@@ -90,6 +114,17 @@ bool DatasetHandler::createDatasetEntry(Dataset::Type t, const QString & path)
 bool DatasetHandler::validFile(const QString &path)
 {
     return checkFile(path) != Dataset::INVALID;
+}
+
+void DatasetHandler::appendFolder(TableModel *model)
+{
+    m_folders.append(model);
+    emit foldersChanged(folders());
+}
+
+TableModel *DatasetHandler::folder(int index) const
+{
+    return m_folders.at(index);
 }
 
 Dataset::Type DatasetHandler::checkFile(const QString &path)
@@ -116,13 +151,13 @@ int DatasetHandler::currentDatasetIndex() const
     return m_currentDatasetIndex;
 }
 
-Dataset *DatasetHandler::currentDataset() const
-{
+//Dataset *DatasetHandler::currentDataset() const
+//{
 
-    if (m_datasetlist.count() < 1)
-        return nullptr;
-    return m_datasetlist[m_currentDatasetIndex];
-}
+//    if (m_datasetlist.count() < 1)
+//        return nullptr;
+//    return m_datasetlist[m_currentDatasetIndex];
+//}
 
 void DatasetHandler::setCurrentDatasetIndex(const int currentDatasetIndex)
 {
@@ -131,15 +166,27 @@ void DatasetHandler::setCurrentDatasetIndex(const int currentDatasetIndex)
 
     m_currentDatasetIndex = currentDatasetIndex;
     emit currentDatasetIndexChanged(m_currentDatasetIndex);
-    emit currentDatasetChanged(currentDataset());
+    //    emit currentDatasetChanged(currentDataset());
 }
 
-Dataset *DatasetHandler::dataset(const int index) const
+
+QQmlListProperty<TableModel> DatasetHandler::folders()
 {
-    return nullptr;//m_datasets.at(index);
+    return {
+        this, this,
+        &DatasetHandler::appendFolder,
+        &DatasetHandler::foldersCount,
+        &DatasetHandler::folder,
+        &DatasetHandler::clearFolders
+    };
 }
 
-void DatasetHandler::clearDatasets() {
+//Dataset *DatasetHandler::dataset(const int index) const
+//{
+//    return nullptr;//m_datasets.at(index);
+//}
+
+void DatasetHandler::clearFolders() {
 //    m_datasets.clear();
 }
 

@@ -3,8 +3,8 @@
 
 IterableQQmlPropertyMap::IterableQQmlPropertyMap(QObject *parent) : QAbstractListModel(parent)
 {
-    QObject::connect(&m_map, SIGNAL(valueChanged(const QString &, const QVariant &)),
-                     this, SIGNAL(valueChanged(const QString &, const QVariant &)));
+    QObject::connect(&m_map, SIGNAL(valueChanged(QString,QVariant)),
+                     this, SLOT(emitValueChanged(QString,QVariant)));
 }
 
 int IterableQQmlPropertyMap::rowCount(const QModelIndex &parent) const
@@ -19,7 +19,7 @@ QVariant IterableQQmlPropertyMap::data(const QModelIndex &index, int role) const
         return QVariant();
     if (role == ROLES::OBJ)
         return QVariant::fromValue( m_map[m_map.keys().at(index.row())] );
-    else if (role == ROLES::KEY)
+    if (role == ROLES::KEY)
         return QVariant::fromValue( m_map.keys().at(index.row()) );
     return QVariant();
 }
@@ -80,5 +80,10 @@ QHash<int, QByteArray> IterableQQmlPropertyMap::roleNames() const
     roles[ROLES::OBJ] = "obj";
     roles[ROLES::KEY] = "key";
     return roles;
+}
+
+void IterableQQmlPropertyMap::emitValueChanged(const QString &key, const QVariant &value)
+{
+    emit valueChanged(key, value);
 }
 

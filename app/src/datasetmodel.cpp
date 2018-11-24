@@ -38,21 +38,18 @@ QVariant TableModel::data(const QModelIndex& idx, const int role) const
     {
         return QSqlQueryModel::data(idx, role);
     }
-    else
+    // search for relationships
+    for (int i = 0; i < columnCount(); i++)
     {
-        // search for relationships
-        for (int i = 0; i < columnCount(); i++)
+        if (this->relation(i).isValid())
         {
-            if (this->relation(i).isValid())
-            {
 //                qDebug() << idx.row() << role << record(idx.row()).value(QString(m_roles.value(role)));
-                return record(idx.row()).value(QString(m_roles.value(role)));
-            }
+            return record(idx.row()).value(QString(m_roles.value(role)));
         }
-
-        // if no valid relationship was found
-        return QSqlQueryModel::data(this->index(idx.row(), role - Qt::UserRole - 1), Qt::DisplayRole);
     }
+
+    // if no valid relationship was found
+    return QSqlQueryModel::data(this->index(idx.row(), role - Qt::UserRole - 1), Qt::DisplayRole);
 }
 
 int TableModel::count() const
@@ -60,9 +57,20 @@ int TableModel::count() const
     return m_count;
 }
 
+void TableModel::setFilter(const QString &filter)
+{
+    QSqlRelationalTableModel::setFilter(filter);
+}
+
+void TableModel::display()
+{
+    qDebug() << rowCount();
+    for (auto i = 0; i < rowCount(); i++)
+        qDebug() << "Rec " << i << " : " << record(i);
+}
+
 void TableModel::setCount(int count)
 {
-    qDebug() << "Set count :" << count;
     if (m_count == count)
         return;
 
@@ -72,7 +80,7 @@ void TableModel::setCount(int count)
 
 void TableModel::updateCount(QSqlRecord &model)
 {
-    qDebug() << "UPDATE COUNT";
+    qDebug() << "Update count";
     Q_UNUSED(model);
     setCount(rowCount());
 }

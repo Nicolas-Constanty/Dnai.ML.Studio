@@ -4,15 +4,17 @@
 #include <QObject>
 #include <QString>
 #include "datasetmodel.h"
+#include "querymodel.h"
+#include "recordfactory.h"
 
 class DatabaseHandler : public QObject {
 
     Q_OBJECT
     Q_PROPERTY(TableModel* providers READ providers WRITE setProviders NOTIFY providersChanged)
-    Q_PROPERTY(TableModel* labels READ labels WRITE setLabels NOTIFY labelsChanged CONSTANT)
-    Q_PROPERTY(TableModel* datasets READ datasets WRITE setDatasets NOTIFY datasetsChanged CONSTANT)
-    Q_PROPERTY(TableModel* entries READ entries WRITE setEntries NOTIFY entriesChanged CONSTANT)
-    Q_PROPERTY(TableModel* folders READ folders WRITE setFolders NOTIFY foldersChanged CONSTANT)
+    Q_PROPERTY(TableModel* labels READ labels WRITE setLabels NOTIFY labelsChanged)
+    Q_PROPERTY(TableModel* datasets READ datasets WRITE setDatasets NOTIFY datasetsChanged)
+    Q_PROPERTY(TableModel* entries READ entries WRITE setEntries NOTIFY entriesChanged)
+    Q_PROPERTY(TableModel* folders READ folders WRITE setFolders NOTIFY foldersChanged)
 
 public:
     DatabaseHandler(QObject *parent = nullptr);
@@ -31,6 +33,10 @@ public:
 
     TableModel* folders() const;
 
+    const RecordFactory &recordFactory() const;
+
+    TableModel *createFolderEntries(int id);
+
 public slots:
     void setProviders(TableModel* providers);
 
@@ -41,6 +47,8 @@ public slots:
     void setEntries(TableModel* entries);
 
     void setFolders(TableModel* folders);
+
+    void updateEntriesRelations(QSqlRecord &);
 
 signals:
     void providersChanged(TableModel* providers);
@@ -61,11 +69,13 @@ private:
     void initDatasets();
     void initFolders();
 
+
     TableModel *m_labels;
     TableModel *m_providers;
     TableModel *m_entries;
     TableModel *m_datasets;
     TableModel *m_folders;
+    RecordFactory m_factory;
 };
 
 #endif // DATABASEHANDLER_H

@@ -24,6 +24,7 @@ T.Content {
             anchors.left: parent.left
             anchors.right: parent.right
             clip: true
+            property var model: index
 
             //DATASET STATES
             states: [
@@ -101,54 +102,39 @@ T.Content {
                         color:  AppSettings.theme.colors.background.color3
                         border.color: AppSettings.theme.colors.background.color1
                         border.width: 1
-//                        ListView {
-//                                id: listView
-//                                anchors.fill: parent
+                        ListView {
+                                id: listView
+                                anchors.fill: parent
 
-//                                contentWidth: headerItem.width
-//                                flickableDirection: Flickable.HorizontalAndVerticalFlick
+                                contentWidth: headerItem.width
+                                flickableDirection: Flickable.HorizontalAndVerticalFlick
 
-//                                header: Row {
-//                                    spacing: 1
-//                                    function itemAt(index) { return repeater.itemAt(index) }
-//                                    Repeater {
-//                                        id: repeater
-//                                        model: ["Filename", "Label"]
-//                                        Label {
-//                                            text: modelData
-//                                            font.bold: true
-//                                            font.pixelSize: 20
-//                                            padding: 10
-//                                            background: Rectangle { color: "silver" }
-//                                        }
-//                                    }
-//                                }
+                                model: Editor.datasetHandler.folder(_dataset.model.id)
+                                delegate: Column {
+                                    id: delegate
+                                    anchors.fill: parent
+                                    property int row: index
+                                    Item {
+                                        height: 30
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        Text {
+                                            text: model.folderId
+                                            height: parent.height
+                                            anchors.left: parent.left
+                                        }
+                                    }
 
-//                                model: 100
-//                                delegate: Column {
-//                                    id: delegate
-//                                    property int row: index
-//                                    Row {
-//                                        spacing: 1
-//                                        Repeater {
-//                                            model: 5
-//                                            ItemDelegate {
-//                                                property int column: index
-//                                                text: qsTr("%1x%2").arg(delegate.row).arg(column)
-//                                                width: listView.headerItem.itemAt(column).width
-//                                            }
-//                                        }
-//                                    }
-//                                    Rectangle {
-//                                        color: "silver"
-//                                        width: parent.width
-//                                        height: 1
-//                                    }
-//                                }
+                                    Rectangle {
+                                        color: "silver"
+                                        width: parent.width
+                                        height: 1
+                                    }
+                                }
 
-//                                ScrollIndicator.horizontal: ScrollIndicator { }
-//                                ScrollIndicator.vertical: ScrollIndicator { }
-//                            }
+                                ScrollIndicator.horizontal: ScrollIndicator { }
+                                ScrollIndicator.vertical: ScrollIndicator { }
+                            }
                     }
                 }
 

@@ -1,6 +1,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QSqlField>
 #include <QSqlError>
 #include <QDebug>
 
@@ -23,7 +24,7 @@ void DatabaseHandler::initDatabases(const QString &dbpath)
     db.setUserName("user");
     db.setPassword("dn41");
     if (!db.open()) {
-        qWarning() << "Cannot open db!!!";
+        qWarning() << QString("Cannot open db!!!");
     }
     initProvider();
     initLabels();
@@ -58,12 +59,12 @@ void DatabaseHandler::setProviders(TableModel *providers)
     if (m_providers == providers)
         return;
 
-    if (m_providers)
-        delete m_providers;
+    delete m_providers;
     m_providers = providers;
-    QObject::connect(m_providers, SIGNAL(beforeInsert(QSqlRecord &)),
-                     m_providers, SLOT(updateCount(QSqlRecord &)));
+    QObject::connect(m_providers, SIGNAL(beforeInsert(QSqlRecord&)),
+                     m_providers, SLOT(updateCount(QSqlRecord&)));
     emit providersChanged(m_providers);
+    providers->updateCount();
 }
 
 void DatabaseHandler::setLabels(TableModel *labels)
@@ -71,12 +72,14 @@ void DatabaseHandler::setLabels(TableModel *labels)
     if (m_labels == labels)
         return;
 
-    if (m_labels)
-        delete m_labels;
+    delete m_labels;
     m_labels = labels;
-    QObject::connect(m_labels, SIGNAL(beforeInsert(QSqlRecord &)),
-                     m_labels, SLOT(updateCount(QSqlRecord &)));
+    QObject::connect(m_labels, SIGNAL(beforeInsert(QSqlRecord&)),
+                     m_labels, SLOT(updateCount(QSqlRecord&)));
+    QObject::connect(m_labels, SIGNAL(beforeInsert(QSqlRecord&)),
+                     this, SLOT(updateEntriesRelations(QSqlRecord&)));
     emit labelsChanged(m_labels);
+    labels->updateCount();
 }
 
 void DatabaseHandler::setDatasets(TableModel *datasets)
@@ -84,12 +87,12 @@ void DatabaseHandler::setDatasets(TableModel *datasets)
     if (m_datasets == datasets)
         return;
 
-    if (m_datasets)
-        delete m_datasets;
+    delete m_datasets;
     m_datasets = datasets;
-    QObject::connect(m_datasets, SIGNAL(beforeInsert(QSqlRecord &)),
-                     m_datasets, SLOT(updateCount(QSqlRecord &)));
+    QObject::connect(m_datasets, SIGNAL(beforeInsert(QSqlRecord&)),
+                     m_datasets, SLOT(updateCount(QSqlRecord&)));
     emit datasetsChanged(m_datasets);
+    datasets->updateCount();
 }
 
 void DatabaseHandler::setEntries(TableModel *entries)
@@ -97,12 +100,12 @@ void DatabaseHandler::setEntries(TableModel *entries)
     if (m_entries == entries)
         return;
 
-    if (m_entries)
-        delete m_entries;
+    delete m_entries;
     m_entries = entries;
-    QObject::connect(m_entries, SIGNAL(beforeInsert(QSqlRecord &)),
-                     m_entries, SLOT(updateCount(QSqlRecord &)));
+    QObject::connect(m_entries, SIGNAL(beforeInsert(QSqlRecord&)),
+                     m_entries, SLOT(updateCount(QSqlRecord&)));
     emit entriesChanged(m_entries);
+    entries->updateCount();
 }
 
 void DatabaseHandler::setFolders(TableModel *folders)
@@ -110,12 +113,12 @@ void DatabaseHandler::setFolders(TableModel *folders)
     if (m_folders == folders)
         return;
 
-    if (m_folders)
-        delete m_folders;
+    delete m_folders;
     m_folders = folders;
-    QObject::connect(m_folders, SIGNAL(beforeInsert(QSqlRecord &)),
-                     m_folders, SLOT(updateCount(QSqlRecord &)));
+    QObject::connect(m_folders, SIGNAL(beforeInsert(QSqlRecord&)),
+                     m_folders, SLOT(updateCount(QSqlRecord&)));
     emit foldersChanged(m_folders);
+    folders->updateCount();
 }
 
 void DatabaseHandler::initProvider()
@@ -123,11 +126,7 @@ void DatabaseHandler::initProvider()
     auto providers = new TableModel();
 
     QSqlQuery query;
-    if (query.exec("CREATE TABLE Providers (id integer PRIMARY KEY, name varchar(40) UNIQUE)")) {
-        query.exec("INSERT INTO Providers VALUES (0, 'Folder')");
-        query.exec("INSERT INTO Providers VALUES (1, 'Video')");
-        query.exec("INSERT INTO Providers VALUES (2, 'CSV')");
-    }
+    auto isInit = query.exec("CREATE TABLE Providers (id integer PRIMARY KEY, name varchar(40) UNIQUE)");
 
     providers->setTable("Providers");
     providers->setHeaderData(0, Qt::Horizontal, "id");
@@ -135,8 +134,28 @@ void DatabaseHandler::initProvider()
     providers->generateRoles();
     providers->select();
 
+    if (isInit)
+    {
+        auto rec = m_factory.create(RecordType::Provider);
+        rec->setValue(0, 0);
+        rec->setValue(1, "Folder");
+        providers->insertRecord(-1, *rec);
+        delete rec;
+
+        rec = m_factory.create(RecordType::Provider);
+        rec->setValue(0, 0);
+        rec->setValue(1, "Folder");
+        providers->insertRecord(-1, *rec);
+        delete rec;
+
+        rec = m_factory.create(RecordType::Provider);
+        rec->setValue(0, 0);
+        rec->setValue(1, "Folder");
+        providers->insertRecord(-1, *rec);
+        delete rec;
+    }
+
     setProviders(providers);
-    providers->updateCount();
 }
 
 void DatabaseHandler::initLabels()
@@ -153,7 +172,6 @@ void DatabaseHandler::initLabels()
     labels->select();
 
     setLabels(labels);
-    labels->updateCount();
 }
 
 void DatabaseHandler::initFolders()
@@ -169,7 +187,6 @@ void DatabaseHandler::initFolders()
     folders->select();
 
     setFolders(folders);
-    folders->updateCount();
 }
 
 void DatabaseHandler::initDatasets()
@@ -188,17 +205,17 @@ void DatabaseHandler::initDatasets()
     datasets->select();
 
     setDatasets(datasets);
-    datasets->updateCount();
 }
+
 
 
 void DatabaseHandler::initEntry()
 {
     auto entries = new TableModel();
     QSqlQuery query;
-    query.exec("CREATE TABLE Entries (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, filename varchar(128) UNIQUE, labelId integer, datasetId integer, folderId integer)");
+    query.exec("CREATE TABLE Entries (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, filename varchar(128), labelId integer, datasetId integer, folderId integer)");
     entries->setTable("Entries");
-    entries->setRelation(2, QSqlRelation("Labels", "id", "name"));
+
     entries->setRelation(3, QSqlRelation("Datasets", "id", "name"));
     entries->setRelation(4, QSqlRelation("Folders", "id", "name"));
     entries->setEditStrategy(QSqlTableModel::OnManualSubmit);
@@ -207,9 +224,41 @@ void DatabaseHandler::initEntry()
     entries->setHeaderData(2, Qt::Horizontal, "labelId");
     entries->setHeaderData(3, Qt::Horizontal, "datasetId");
     entries->setHeaderData(4, Qt::Horizontal, "folderId");
+    entries->generateRoles();
+    entries->select();
 
     setEntries(entries);
-    entries->updateCount();
+}
+
+TableModel *DatabaseHandler::createFolderEntries(int id)
+{
+    auto entries = new TableModel();
+    entries->setTable("Entries");
+
+    entries->setRelation(3, QSqlRelation("Datasets", "id", "name"));
+    entries->setRelation(4, QSqlRelation("Folders", "id", "name"));
+    entries->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    entries->setHeaderData(0, Qt::Horizontal, "id");
+    entries->setHeaderData(1, Qt::Horizontal, "filename");
+    entries->setHeaderData(2, Qt::Horizontal, "labelId");
+    entries->setHeaderData(3, Qt::Horizontal, "datasetId");
+    entries->setHeaderData(4, Qt::Horizontal, "folderId");
+    entries->generateRoles();
+    entries->select();
+    entries->setFilter("datasetId=" + QString::number(id));
+    return entries;
+}
+
+void DatabaseHandler::updateEntriesRelations(QSqlRecord &rec)
+{
+    qDebug() << "updateEntriesRelations";
+    Q_UNUSED(rec)
+    qDebug() << "setup relations" << m_labels->rowCount() << m_entries->relation(2).isValid();
+    if (m_labels->rowCount() > 0 && !m_entries->relation(2).isValid())
+    {
+        qDebug() << "setup relations";
+        m_entries->setRelation(2, QSqlRelation("Labels", "id", "name"));
+    }
 }
 
 void DatabaseHandler::setLabelNames(const QStringList &labelNames)
@@ -218,14 +267,17 @@ void DatabaseHandler::setLabelNames(const QStringList &labelNames)
     for (const auto& l : labelNames)
     {
         if (l.isEmpty()) continue;
-        QSqlQuery query;
-        query.prepare("INSERT INTO Labels (name) VALUES (?)");
-        query.addBindValue(l);
-        if (query.exec())
+        auto rec = m_factory.create(RecordType::Label);
+        rec->setValue(1, l);
+        if (m_labels->insertRecord(-1, *rec))
             changed = true;
+        delete rec;
     }
-    if (changed && m_labels->submitAll())
+    if (changed)
+    {
+        m_labels->submitAll();
         emit labelsChanged(m_labels);
+    }
 }
 
 void DatabaseHandler::removeLabel(const int id)
@@ -243,5 +295,10 @@ void DatabaseHandler::removeLabel(const int id)
 TableModel *DatabaseHandler::folders() const
 {
     return m_folders;
+}
+
+const RecordFactory &DatabaseHandler::recordFactory() const
+{
+    return m_factory;
 }
 

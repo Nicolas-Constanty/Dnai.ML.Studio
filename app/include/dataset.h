@@ -13,9 +13,9 @@ class Dataset : public QObject
     Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
     Q_PROPERTY(IterableQQmlPropertyMap *labels READ labels WRITE setLabels NOTIFY labelsChanged)
 public:
-    enum Type : uint
+    enum Type : int
 	{
-		DIR,
+                DIR = 0,
 		MP4,
 		CSV,
 		INVALID

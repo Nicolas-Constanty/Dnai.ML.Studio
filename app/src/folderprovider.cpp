@@ -30,31 +30,32 @@ void FolderProvider::generateModel(const QString &path, int datasetId)
     }
 
     QDirIterator it(path, QDir::Files, QDirIterator::Subdirectories);
-    QSqlQuery query;
     QDir last;
-    QDir init(path);
     auto db = Editor::instance().databaseHandler();
     auto folders = db->folders();
+    auto entries = db->entries();
 	while (it.hasNext())
 	{
-        auto n = it.next();
+        it.next();
         auto info = it.fileInfo();
         if (info.absoluteDir() == path)
             continue;
         if (info.absoluteDir() != last)
         {
             last = it.fileInfo().absoluteDir();
-            query.prepare("INSERT INTO Folders (name) VALUES (?)");
-            query.addBindValue(last.dirName());
-            query.exec();
+            auto rec = db->recordFactory().create(RecordType::Folder);
+            rec->setValue("name", last.dirName());
+            folders->insertRecord(-1, *rec);
             folders->submitAll();
+            delete rec;
         }
-        query.prepare("INSERT INTO Entries (filename, labelId, datasetId, folderId) VALUES (?, ?, ?, ?)");
-        query.addBindValue(it.fileInfo().fileName());
-        query.addBindValue(0);
-        query.addBindValue(datasetId);
-        query.addBindValue(folders->rowCount());
-        query.exec();
-	}
+        auto rec = db->recordFactory().create(RecordType::Entry);
+        rec->setValue("filename", it.fileInfo().fileName());
+        rec->setValue("labelId", 0);
+        rec->setValue("datasetId", datasetId);
+        rec->setValue("folderId", folders->rowCount());
+        entries->insertRecord(-1, *rec);
+        delete rec;
+    }
     db->entries()->submitAll();
 }

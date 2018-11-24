@@ -65,7 +65,7 @@ Project *Project::load(const QString &path)
 
     const auto data = file.readAll();
     try {
-        QJsonParseError err;
+        QJsonParseError err = {};
         const QJsonObject obj(QJsonDocument::fromJson(data, &err).object());
         if (err.error != QJsonParseError::NoError)
         {
@@ -98,15 +98,16 @@ QString Project::description() const
     return m_description;
 }
 
-void Project::operator=(const Project &proj)
+Project &Project::operator=(const Project &proj)
 {
     m_name = proj.name();
     m_description = proj.description();
     m_dbPath = proj.dbPath();
     m_path = proj.path();
+    return *this;
 }
 
-void Project::setName(QString name)
+void Project::setName(const QString &name)
 {
     if (m_name == name)
         return;
@@ -115,7 +116,7 @@ void Project::setName(QString name)
     emit nameChanged(m_name);
 }
 
-void Project::setDbPath(QString dbPath)
+void Project::setDbPath(const QString &dbPath)
 {
     if (m_dbPath == dbPath)
         return;
@@ -124,7 +125,7 @@ void Project::setDbPath(QString dbPath)
     emit dbPathChanged(m_dbPath);
 }
 
-void Project::setPath(QString path)
+void Project::setPath(const QString &path)
 {
     if (m_path == path)
         return;
@@ -138,7 +139,7 @@ void Project::setPath(QString path)
     emit pathChanged(m_path);
 }
 
-void Project::setDescription(QString description)
+void Project::setDescription(const QString &description)
 {
     if (m_description == description)
         return;

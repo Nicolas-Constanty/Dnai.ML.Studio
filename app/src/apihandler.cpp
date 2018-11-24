@@ -19,7 +19,7 @@ QString ApiHandler::addr() const
     return m_addr;
 }
 
-void ApiHandler::setAddr(QString addr)
+void ApiHandler::setAddr(const QString &addr)
 {
     if (m_addr == addr)
         return;
@@ -28,7 +28,7 @@ void ApiHandler::setAddr(QString addr)
     emit addrChanged(m_addr);
 }
 
-void ApiHandler::replyFinished(QNetworkReply *reply)
+void ApiHandler::replyFinished(QNetworkReply *)
 {
 
 }
@@ -53,7 +53,7 @@ void ApiHandler::authReadyRead()
     reply->deleteLater();
 }
 
-void ApiHandler::slotError(QNetworkReply::NetworkError e)
+void ApiHandler::slotError(const QNetworkReply::NetworkError &e)
 {
     qDebug() << "Error :" << e;
     auto obj = QObject::sender();
@@ -64,12 +64,12 @@ void ApiHandler::slotError(QNetworkReply::NetworkError e)
     qDebug() << json["error"].toString();
 }
 
-void ApiHandler::slotSslErrors(QList<QSslError>)
+void ApiHandler::slotSslErrors(const QList<QSslError> &)
 {
 
 }
 
-JsonRequest ApiHandler::jsonRequest(const QJsonObject &json, QUrl url)
+JsonRequest ApiHandler::jsonRequest(const QJsonObject &json, const QUrl &url)
 {
     QJsonDocument doc(json);
     // Build your JSON string as usual

@@ -16,7 +16,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     src/main.cpp \
     src/editor.cpp \
-    src/dataset.cpp \
     src/datasethandler.cpp \
     src/iterableqqmlpropertymap.cpp \
     src/apihandler.cpp \
@@ -24,7 +23,8 @@ SOURCES += \
     src/aprovider.cpp \
     src/datasetmodel.cpp \
     src/project.cpp \
-    src/databasehandler.cpp
+    src/databasehandler.cpp \
+    src/querymodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -44,14 +44,16 @@ INCLUDEPATH += include/
 HEADERS += \
     include/editor.h \
     include/datasethandler.h \
-    include/dataset.h \
     include/iterableqqmlpropertymap.h \
     include/aprovider.h \
     include/apihandler.h \
     include/folderprovider.h \
     include/datasetmodel.h \
     include/project.h \
-    include/databasehandler.h
+    include/databasehandler.h \
+    include/querymodel.h \
+    include/ifactory.h \
+    include/recordfactory.h
 
 DISTFILES += \
     dark.json

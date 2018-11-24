@@ -24,21 +24,21 @@ public:
     QString addr() const;
 
 public slots:
-    void setAddr(QString addr);
+    void setAddr(const QString &addr);
     void replyFinished(QNetworkReply *reply);
 
     void authReadyRead();
 
-    void slotError(QNetworkReply::NetworkError);
-    void slotSslErrors(QList<QSslError>);
+    void slotError(const QNetworkReply::NetworkError &);
+    void slotSslErrors(const QList<QSslError> &);
 signals:
-    void addrChanged(QString addr);
+    void addrChanged(const QString &addr);
 
 private:
     QString m_addr;
     QString m_sessionToken;
     QNetworkAccessManager *m_manager;
-    JsonRequest jsonRequest(const QJsonObject &json, QUrl url);
+    JsonRequest jsonRequest(const QJsonObject &json, const QUrl &url);
     QJsonObject byteArrayToJson(const QByteArray &b);
 };
 

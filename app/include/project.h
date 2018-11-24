@@ -24,14 +24,14 @@ public:
     Q_INVOKABLE static Project *defaultProject();
 
     QString description() const;
-    void operator=(const Project &proj);
+    Project &operator=(const Project &proj);
 
 public slots:
-    void setName(QString name);
-    void setDbPath(QString dbPath);
-    void setPath(QString path);
+    void setName(const QString &name);
+    void setDbPath(const QString &dbPath);
+    void setPath(const QString &path);
 
-    void setDescription(QString description);
+    void setDescription(const QString &description);
 
 signals:
 void nameChanged(QString name);

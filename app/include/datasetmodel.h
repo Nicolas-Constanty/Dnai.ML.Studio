@@ -21,6 +21,9 @@ public:
     //    Q_INVOKABLE QVariantMap operator[](int) const;
     int count() const;
 
+    Q_INVOKABLE void setFilter(const QString &filter) override;
+    Q_INVOKABLE void display();
+
 public slots:
     void setCount(int count);
     void updateCount(QSqlRecord &model);
