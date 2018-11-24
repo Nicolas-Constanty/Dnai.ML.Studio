@@ -23,8 +23,7 @@ SOURCES += \
     src/aprovider.cpp \
     src/datasetmodel.cpp \
     src/project.cpp \
-    src/databasehandler.cpp \
-    src/querymodel.cpp
+    src/databasehandler.cpp
 
 RESOURCES += qml.qrc
 
@@ -51,7 +50,6 @@ HEADERS += \
     include/datasetmodel.h \
     include/project.h \
     include/databasehandler.h \
-    include/querymodel.h \
     include/ifactory.h \
     include/recordfactory.h
 
