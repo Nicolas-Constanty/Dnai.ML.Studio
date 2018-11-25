@@ -5,9 +5,9 @@
 #include <QSqlQuery>
 #include <QSqlDatabase>
 #include <QSqlField>
+#include <QSqlError>
 
 #include "datasethandler.h"
-#include "dataset.h"
 #include "folderprovider.h"
 #include "editor.h"
 
@@ -27,15 +27,15 @@ AProvider *DatasetHandler::createProvider(const QString &path)
 	AProvider *provider = nullptr;
 	switch (type)
 	{
-	case Dataset::DIR:
+    case AProvider::DIR:
         return new FolderProvider();
-    case Dataset::MP4:
-        qWarning() << "Mp4 provider is not ready!";
+    case AProvider::MP4:
+        qWarning()  << "==App.DatasetHandler== " << "Mp4 provider is not ready!";
         return nullptr;
-    case Dataset::CSV:
-        qWarning() << "CSV provider is not ready!";
+    case AProvider::CSV:
+        qWarning()  << "==App.DatasetHandler== " << "CSV provider is not ready!";
         return nullptr;
-    case Dataset::INVALID: return nullptr;
+    case AProvider::INVALID: return nullptr;
 	}
     return provider;
 }
@@ -45,33 +45,31 @@ void DatasetHandler::initDatabaseHandler()
     m_dbh = Editor::instance().databaseHandler();
 }
 
-void DatasetHandler::refreshDatasetList()
+void DatasetHandler::refreshFolders()
 {
-//    for (auto i = 0; i < m_dbh->datasets()->rowCount(); i++)
-//    {
-//        qDebug() << m_dbh->datasets()->record(i);
-//        qDebug() << m_dbh->datasets()->data(m_dbh->datasets()->index(i, 0), Qt::UserRole + 1);
-//        qDebug() << m_dbh->datasets()->data(m_dbh->datasets()->index(i, 0), Qt::UserRole + 2);
-//        qDebug() << m_dbh->datasets()->data(m_dbh->datasets()->index(i, 0), Qt::UserRole + 3);
-//        qDebug() << m_dbh->datasets()->data(m_dbh->datasets()->index(i, 0), Qt::UserRole + 4);
-//    }
+    auto dts = m_dbh->datasets();
+    for (auto i = 0; i < dts->rowCount(); i++)
+        m_folders.append(m_dbh->createFolderEntries(i+1));
 }
 
 void DatasetHandler::createDatasetFromPath(const QString &path)
 {
+    qDebug() << "Dataset start";
     auto p = QUrl(path).toLocalFile();
     auto datasetType = checkFile(path);
+    qDebug() << "Dataset start 1";
+
+
     if (!createDatasetEntry(datasetType, p)) {
-        qWarning() << "Cannot create new dataset entry with path : " << path;
+        qWarning()  << "==App.DatasetHandler== " << "Cannot create new dataset entry with path : " << path;
         return;
     }
 
-    providers[datasetType]->generateModel(p, m_dbh->datasets()->rowCount());
-
+    providers[datasetType - 1]->preload(p, m_dbh->datasets()->rowCount() + 1);
+    m_folders.append(m_dbh->createFolderEntries(m_dbh->datasets()->rowCount() + 1));
     m_dbh->datasets()->submitAll();
-    m_dbh->entries()->submitAll();
+    m_dbh->datasets()->updateCount();
 
-    m_folders.append(m_dbh->createFolderEntries(m_dbh->datasets()->rowCount()));
 }
 
 
@@ -96,24 +94,37 @@ int DatasetHandler::foldersCount(QQmlListProperty<TableModel>* list) {
     return static_cast< DatasetHandler* >(list->data)->foldersCount();
 }
 
-bool DatasetHandler::createDatasetEntry(Dataset::Type t, const QString & path)
+bool DatasetHandler::createDatasetEntry(AProvider::Type t, const QString & path)
 {
-    QSqlRecord rec;
-    rec.append(QSqlField("id", QVariant::Int));
-    rec.append(QSqlField("name", QVariant::String));
-    rec.append(QSqlField("path", QVariant::String));
-    rec.append(QSqlField("providerId", QVariant::Int));
+    QSqlQuery q;
 
-    rec.setValue(1, QString("Dataset n° ") + QString::number(m_dbh->datasets()->rowCount() + 1));
-    rec.setValue(2, path);
-    rec.setValue(3, t);
+    q.prepare("INSERT into Datasets (id, name, path, providerId) values (?, ?, ?, ?)");
+    q.bindValue(0, m_dbh->datasets()->rowCount() + 1);
+    q.bindValue(1, QString("Dataset n° ") + QString::number(m_dbh->datasets()->rowCount() + 1));
+    q.bindValue(2, path);
+    q.bindValue(3, t);
 
-    return m_dbh->datasets()->insertRecord(-1, rec);
+    if (!q.exec()) {
+        qDebug() << q.lastError();
+        return false;
+    }
+    return true;
+//    QSqlRecord rec;
+//    rec.append(QSqlField("id", QVariant::Int));
+//    rec.append(QSqlField("name", QVariant::String));
+//    rec.append(QSqlField("path", QVariant::String));
+//    rec.append(QSqlField("providerId", QVariant::Int));
+
+//    rec.setValue(1, QString("Dataset n° ") + QString::number(m_dbh->datasets()->rowCount() + 1));
+//    rec.setValue(2, path);
+//    rec.setValue(3, t);
+
+//    return m_dbh->datasets()->insertRecord(-1, rec);
 }
 
 bool DatasetHandler::validFile(const QString &path)
 {
-    return checkFile(path) != Dataset::INVALID;
+    return checkFile(path) != AProvider::INVALID;
 }
 
 void DatasetHandler::appendFolder(TableModel *model)
@@ -124,27 +135,29 @@ void DatasetHandler::appendFolder(TableModel *model)
 
 TableModel *DatasetHandler::folder(int index) const
 {
+    if (index < 0 || index >= m_folders.length())
+        return nullptr;
     return m_folders.at(index);
 }
 
-Dataset::Type DatasetHandler::checkFile(const QString &path)
+AProvider::Type DatasetHandler::checkFile(const QString &path)
 {
     QFileInfo infos(QUrl(path).toLocalFile());
     if (!infos.exists())
     {
-        qWarning() << "File:" << path << "doesn't exist!";
-        qWarning() << "Abort dataset creation!";
-        return Dataset::INVALID;
+        qWarning()  << "==App.DatasetHandler== " << "File:" << path << "doesn't exist!";
+        qWarning()  << "==App.DatasetHandler== " << "Abort dataset creation!";
+        return AProvider::INVALID;
     }
 
     if (infos.isDir())
-        return Dataset::DIR;
+        return AProvider::DIR;
     if (infos.isFile() && infos.suffix() == "csv")
-        return Dataset::CSV;
+        return AProvider::CSV;
     if (infos.isFile() && infos.suffix() == "mp4")
-        return Dataset::MP4;
+        return AProvider::MP4;
 
-    return Dataset::INVALID;
+    return AProvider::INVALID;
 }
 int DatasetHandler::currentDatasetIndex() const
 {

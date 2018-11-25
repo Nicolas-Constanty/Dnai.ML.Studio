@@ -5,6 +5,13 @@
 
 class AProvider {
 public:
+    enum Type : int
+    {
+        DIR = 1,
+        MP4,
+        CSV,
+        INVALID
+    };
     explicit AProvider() : m_data(nullptr, QSqlDatabase::database()), m_init(false)
 	{
 	}
@@ -19,6 +26,7 @@ public:
 	void updateProvider(const QString &name);
 	void updateProviderFromCsv(const QString &name, const QString &csvPath);
 
+    virtual void preload(const QString &path, int datasetId) = 0;
     virtual void generateModel(const QString &path, int datasetId) = 0;
 
 protected:

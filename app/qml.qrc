@@ -22,5 +22,6 @@
         <file>resources/Images/Keras.png</file>
         <file>resources/Templates/NextButton.qml</file>
         <file>resources/Templates/PrevButton.qml</file>
+        <file>resources/Templates/FolderStatus.qml</file>
     </qresource>
 </RCC>

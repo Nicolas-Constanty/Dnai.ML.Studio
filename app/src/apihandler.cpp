@@ -38,7 +38,7 @@ QJsonObject ApiHandler::byteArrayToJson(const QByteArray &b)
     QString strReply = static_cast<QString>(b);
     QJsonDocument jsonResponse = QJsonDocument::fromJson(strReply.toUtf8());
     QJsonObject jsonObject = jsonResponse.object();
-    qDebug() << jsonObject;
+    qDebug() << "==App.ApiHandler== " << jsonObject;
     return jsonObject;
 }
 
@@ -55,13 +55,13 @@ void ApiHandler::authReadyRead()
 
 void ApiHandler::slotError(const QNetworkReply::NetworkError &e)
 {
-    qDebug() << "Error :" << e;
+    qDebug() << "==App.ApiHandler== " << "Error :" << e;
     auto obj = QObject::sender();
     auto reply = dynamic_cast<QNetworkReply*>(obj);
     if (reply == nullptr) return;
     auto r = reply->readAll();
     auto json = byteArrayToJson(r);
-    qDebug() << json["error"].toString();
+    qDebug() << "==App.ApiHandler== " << json["error"].toString();
 }
 
 void ApiHandler::slotSslErrors(const QList<QSslError> &)
@@ -97,7 +97,7 @@ void ApiHandler::connect(const QString &password)
 
     auto request = jsonRequest(o, QUrl("http://" + m_addr + routes[AUTH]));
 
-    qDebug() << "Connect to :" << request.first.url() << "with" << request.second;
+    qDebug() << "==App.ApiHandler== " << "Connect to :" << request.first.url() << "with" << request.second;
     QNetworkReply *reply = m_manager->post(request.first, request.second);
     QObject::connect(reply, SIGNAL(finished()), this, SLOT(authReadyRead()));
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),

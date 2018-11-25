@@ -32,12 +32,12 @@ void Project::save()
     QFile file(filename());
     if (!file.open(QIODevice::WriteOnly))
     {
-        qWarning() << "==Project== Unable to open project file " << file.fileName() << ": " << file.errorString();
+        qWarning() << "==App.Project== Unable to open project file " << file.fileName() << ": " << file.errorString();
         file.close();
         return;
     }
     file.write(QJsonDocument(serialise()).toJson(QJsonDocument::Compact));
-    qDebug() << "==Project== Project saved into " << file.fileName();
+    qDebug() << "==App.Project== Project saved into " << file.fileName();
     file.close();
 }
 
@@ -53,13 +53,13 @@ Project *Project::load(const QString &path)
     QFileInfo info(p);
     if (!info.exists())
     {
-        qWarning() << "File doesn't exist";
+        qWarning()  << "==App.Project== " << "File doesn't exist";
         return nullptr;
     }
     QFile file(p);
     if (!file.open(QFile::ReadOnly))
     {
-        qWarning() << "==Project== Unable to open project file " << file.fileName() << ": " << file.errorString();
+        qWarning() << "==App.Project== Unable to open project file " << file.fileName() << ": " << file.errorString();
         return nullptr;
     }
 
@@ -69,7 +69,7 @@ Project *Project::load(const QString &path)
         const QJsonObject obj(QJsonDocument::fromJson(data, &err).object());
         if (err.error != QJsonParseError::NoError)
         {
-            qWarning() << "==Project==" << err.errorString() << "at character :" << err.offset;
+            qWarning() << "==App.Project==" << err.errorString() << "at character :" << err.offset;
             file.close();
             return nullptr;
         }
@@ -80,7 +80,7 @@ Project *Project::load(const QString &path)
         return project;
     } catch (std::exception &e) {
         Q_UNUSED(e)
-        qWarning() << "==Project== Couldn't parse file.";
+        qWarning() << "==App.Project== Couldn't parse file.";
         return nullptr;
     }
 }
@@ -152,7 +152,7 @@ void Project::deserialise(const QJsonObject &obj)
 {
     m_name = obj["name"].toString();
     m_description = obj["description"].toString();
-    qDebug() << "Deserialise" << m_path;
+    qDebug()  << "==App.Project== " << "Deserialise" << m_path;
     m_dbPath = m_path + "/" + m_name + ".db";
 }
 
@@ -168,6 +168,7 @@ QJsonObject Project::serialise()
 void Project::initDB()
 {
     Editor::instance().databaseHandler()->initDatabases(m_dbPath);
+    Editor::instance().datasetHandler()->refreshFolders();
 }
 
 QString Project::filename()

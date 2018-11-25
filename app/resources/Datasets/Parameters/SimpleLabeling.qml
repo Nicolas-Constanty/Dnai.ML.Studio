@@ -13,7 +13,7 @@ T.Parameters {
     //HEADER
     title: "Labels properties"
 
-    content: [
+    contents: [
         T.TextAreaProperty {
             name: "Tags"
             onRecordTag: {

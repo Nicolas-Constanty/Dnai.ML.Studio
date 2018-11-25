@@ -40,6 +40,9 @@ ApplicationWindow {
             }
             TabButton {
                 text: qsTr("Dataset")
+                onClicked: {
+                    _dataset.load = true
+                }
             }
             TabButton {
                 text: qsTr("Hyper Parameters")
@@ -71,6 +74,7 @@ ApplicationWindow {
                 editorView: _settings
             }
             enableParameters: false
+            load: true
         }
         EditorView {
             id: _dataset

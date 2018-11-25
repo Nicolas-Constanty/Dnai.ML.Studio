@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QQmlListProperty>
-#include "dataset.h"
+#include "aprovider.h"
 #include "datasetmodel.h"
 #include "databasehandler.h"
 
@@ -25,6 +25,8 @@ public:
 	void setCurrentDatasetIndex(int currentDatasetIndex);
 
     QQmlListProperty<TableModel> folders();
+    void refreshFolders();
+
 
 public:
 	Q_INVOKABLE void createDatasetFromPath(const QString & path);
@@ -46,7 +48,7 @@ signals:
 
 private slots:
 private:
-    static Dataset::Type checkFile(const QString & path);
+    static AProvider::Type checkFile(const QString & path);
     static void appendFolder(QQmlListProperty<TableModel>* list, TableModel * p);
     static void clearFolders(QQmlListProperty<TableModel>* list);
     static TableModel *folder(QQmlListProperty<TableModel>* list, int i);
@@ -55,9 +57,8 @@ private:
     int m_currentDatasetIndex;
     DatabaseHandler *m_dbh;
 //    QVector<Dataset *> m_datasetlist;
-    bool createDatasetEntry(Dataset::Type t, const QString &path);
+    bool createDatasetEntry(AProvider::Type t, const QString &path);
 
-    void refreshDatasetList();
 
     static QVector<AProvider *> providers;
     QVector<TableModel *> m_folders;

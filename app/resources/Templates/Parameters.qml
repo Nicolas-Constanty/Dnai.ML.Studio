@@ -7,7 +7,7 @@ import App.Controllers 1.0
 Item {
     id: _parameters
     property alias title: _headerTitle.text
-    property list<Item> content
+    property list<Item> contents
     anchors.margins: 10
     //HEADER
     Rectangle {
@@ -41,7 +41,7 @@ Item {
         spacing: 10
 
         Component.onCompleted: {
-            _properties.children = _parameters.content
+            _properties.children = _parameters.contents
         }
     }
 }

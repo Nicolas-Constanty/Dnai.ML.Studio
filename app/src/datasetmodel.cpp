@@ -1,4 +1,6 @@
 #include <QSqlRecord>
+#include <QSqlQuery>
+#include <QSqlError>
 #include <QDebug>
 
 #include "datasetmodel.h"
@@ -17,9 +19,14 @@ void TableModel::generateRoles()
 {
     m_roles.clear();
 	const auto nbCols = this->columnCount();
+    auto x = Qt::UserRole + 1;
 	for (auto i = 0; i < nbCols; i++)
-	{
-        m_roles[Qt::UserRole + i + 1] = QVariant(this->headerData(i, Qt::Horizontal).toString()).toByteArray();
+    {
+        m_roles[x++] = QVariant(this->headerData(i, Qt::Horizontal).toString()).toByteArray();
+    }
+    for (auto i = 0; i < nbCols; i++)
+    {
+        m_roles[x++] = QVariant(QString("_" + this->headerData(i, Qt::Horizontal).toString())).toByteArray();
     }
 }
 
@@ -38,18 +45,27 @@ QVariant TableModel::data(const QModelIndex& idx, const int role) const
     {
         return QSqlQueryModel::data(idx, role);
     }
-    // search for relationships
-    for (int i = 0; i < columnCount(); i++)
+    auto count = role - (Qt::UserRole + 1);
+
+    if (relation(count).isValid())
     {
-        if (this->relation(i).isValid())
-        {
-//                qDebug() << idx.row() << role << record(idx.row()).value(QString(m_roles.value(role)));
-            return record(idx.row()).value(QString(m_roles.value(role)));
-        }
+        return record(idx.row()).value(count);
     }
 
-    // if no valid relationship was found
-    return QSqlQueryModel::data(this->index(idx.row(), role - Qt::UserRole - 1), Qt::DisplayRole);
+    if (m_roles.value(role).at(0) == '_')
+    {
+        auto m = role - columnCount() - (Qt::UserRole + 1);
+
+        if (relation(m).isValid())
+        {
+            QSqlQuery q;
+            q.prepare("SELECT id FROM " + tableName() + "  WHERE id=" + QString::number(idx.row()));
+            if (!q.exec())
+                qDebug() << q.lastError();
+            return q.record().value(0);
+        }
+    }
+    return record(idx.row()).value(QString(m_roles.value(role)));
 }
 
 int TableModel::count() const
@@ -64,9 +80,9 @@ void TableModel::setFilter(const QString &filter)
 
 void TableModel::display()
 {
-    qDebug() << rowCount();
+    qDebug()  << "==App.DatasetModel== " << rowCount();
     for (auto i = 0; i < rowCount(); i++)
-        qDebug() << "Rec " << i << " : " << record(i);
+        qDebug()  << "==App.DatasetModel== " << "Rec " << i << " : " << record(i);
 }
 
 void TableModel::setCount(int count)
@@ -80,7 +96,6 @@ void TableModel::setCount(int count)
 
 void TableModel::updateCount(QSqlRecord &model)
 {
-    qDebug() << "Update count";
     Q_UNUSED(model);
     setCount(rowCount());
 }

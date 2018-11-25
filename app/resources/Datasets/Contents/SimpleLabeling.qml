@@ -24,7 +24,7 @@ T.Content {
             anchors.left: parent.left
             anchors.right: parent.right
             clip: true
-            property var model: index
+            property var modelIndex: index
 
             //DATASET STATES
             states: [
@@ -34,7 +34,7 @@ T.Content {
                 },
                 State{
                     name:"Expended"
-                    PropertyChanges{ target: _dataset; height: _contentView.height - 120 }
+                    PropertyChanges{ target: _dataset; height: Editor.datasetHandler.folder(_dataset.modelIndex).rowCount() > 15 ? _contentView.height - 120 : Editor.datasetHandler.folder(_dataset.modelIndex).rowCount() * 34 + 90 }
                 }
             ]
             state: index == Editor.datasetHandler.currentDatasetIndex ? "Expended" : "Collapsed"
@@ -105,30 +105,43 @@ T.Content {
                         ListView {
                                 id: listView
                                 anchors.fill: parent
+                                anchors.margins: 10
+                                spacing: 4
 
-                                contentWidth: headerItem.width
                                 flickableDirection: Flickable.HorizontalAndVerticalFlick
 
-                                model: Editor.datasetHandler.folder(_dataset.model.id)
-                                delegate: Column {
+                                model: Editor.datasetHandler.folder(_dataset.modelIndex)
+                                delegate: Rectangle {
                                     id: delegate
-                                    anchors.fill: parent
+                                    property var folder: model
+                                    height: 30
+                                    anchors.left: parent.left
+                                    anchors.right: parent.right
+                                    color: AppSettings.theme.colors.background.light
                                     property int row: index
-                                    Item {
-                                        height: 30
+                                    Label {
                                         anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        Text {
-                                            text: model.folderId
-                                            height: parent.height
-                                            anchors.left: parent.left
-                                        }
+                                        anchors.leftMargin: 10
+                                        text: delegate.folder.name
+                                        height: parent.height
+                                    }
+                                    ComboBox {
+                                        textRole: "name"
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        model: Editor.databaseHandler.labels
+                                        anchors.right: _status.left
+                                        anchors.rightMargin: 15
+                                        visible: Editor.databaseHandler.labels.rowCount() > 1
+                                        currentIndex: delegate.folder._labelId
                                     }
 
-                                    Rectangle {
-                                        color: "silver"
-                                        width: parent.width
-                                        height: 1
+                                    T.FolderStatus {
+                                        id: _status
+                                        status: delegate.folder._folderStatusId
+                                        radius: 4
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
                                     }
                                 }
 

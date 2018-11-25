@@ -7,8 +7,10 @@ import Dnai.Theme 1.0
 import Dnai.Settings 1.0
 
 Item {
+    id: _editorView
     property bool enableParameters: true
     property bool enableTools: true
+    property bool load: false
 
     property alias tools: _tools._contentChildren
     property alias parameters: _parameters._contentChildren
@@ -39,7 +41,7 @@ Item {
             Loader {
                 id: _toolsLoader
                 anchors.fill: parent
-                active: true
+                active: _editorView.load
             }
 
 //            Label {
@@ -60,7 +62,7 @@ Item {
             Loader {
                 id: _contentViewLoader
                 anchors.fill: parent
-                active: true
+                active: _editorView.load
             }
         }
         Rectangle {
@@ -78,7 +80,7 @@ Item {
             Loader {
                 id: _parametersLoader
                 anchors.fill: parent
-                active: true
+                active: _editorView.load
             }
         }
     }

@@ -14,6 +14,7 @@ DatabaseHandler::DatabaseHandler(QObject *parent) : QObject (parent)
     m_datasets = nullptr;
     m_entries = nullptr;
     m_folders = nullptr;
+    m_folderStatus = nullptr;
 }
 
 void DatabaseHandler::initDatabases(const QString &dbpath)
@@ -24,14 +25,15 @@ void DatabaseHandler::initDatabases(const QString &dbpath)
     db.setUserName("user");
     db.setPassword("dn41");
     if (!db.open()) {
-        qWarning() << QString("Cannot open db!!!");
+        qWarning()  << "==App.DataBaseHandler== " << "Cannot open db!!!";
     }
+    initFolderStatus();
     initProvider();
     initLabels();
     initDatasets();
     initFolders();
     initEntry();
-    qDebug() << QSqlDatabase::database().tables();
+    qDebug() << "==App.DataBaseHandler== " << QSqlDatabase::database().tables();
 }
 
 TableModel *DatabaseHandler::providers() const
@@ -52,6 +54,19 @@ TableModel *DatabaseHandler::datasets() const
 TableModel *DatabaseHandler::entries() const
 {
     return m_entries;
+}
+
+void DatabaseHandler::setFolderStatus(TableModel *folderStatus)
+{
+    if (m_folderStatus == folderStatus)
+        return;
+
+    delete m_providers;
+    m_folderStatus = folderStatus;
+    QObject::connect(m_folderStatus, SIGNAL(beforeInsert(QSqlRecord&)),
+                     m_folderStatus, SLOT(updateCount(QSqlRecord&)));
+    emit providersChanged(m_folderStatus);
+    folderStatus->updateCount();
 }
 
 void DatabaseHandler::setProviders(TableModel *providers)
@@ -89,8 +104,8 @@ void DatabaseHandler::setDatasets(TableModel *datasets)
 
     delete m_datasets;
     m_datasets = datasets;
-    QObject::connect(m_datasets, SIGNAL(beforeInsert(QSqlRecord&)),
-                     m_datasets, SLOT(updateCount(QSqlRecord&)));
+//    QObject::connect(m_datasets, SIGNAL(beforeInsert(QSqlRecord&)),
+//                     m_datasets, SLOT(updateCount(QSqlRecord&)));
     emit datasetsChanged(m_datasets);
     datasets->updateCount();
 }
@@ -137,20 +152,17 @@ void DatabaseHandler::initProvider()
     if (isInit)
     {
         auto rec = m_factory.create(RecordType::Provider);
-        rec->setValue(0, 0);
         rec->setValue(1, "Folder");
         providers->insertRecord(-1, *rec);
         delete rec;
 
         rec = m_factory.create(RecordType::Provider);
-        rec->setValue(0, 0);
-        rec->setValue(1, "Folder");
+        rec->setValue(1, "MP4");
         providers->insertRecord(-1, *rec);
         delete rec;
 
         rec = m_factory.create(RecordType::Provider);
-        rec->setValue(0, 0);
-        rec->setValue(1, "Folder");
+        rec->setValue(1, "CSV");
         providers->insertRecord(-1, *rec);
         delete rec;
     }
@@ -158,11 +170,45 @@ void DatabaseHandler::initProvider()
     setProviders(providers);
 }
 
+void DatabaseHandler::initFolderStatus()
+{
+    auto folderStatus = new TableModel();
+
+    QSqlQuery query;
+    auto isInit = query.exec("CREATE TABLE FolderStatus (id integer PRIMARY KEY, name varchar(40) UNIQUE)");
+
+    folderStatus->setTable("FolderStatus");
+    folderStatus->setHeaderData(0, Qt::Horizontal, "id");
+    folderStatus->setHeaderData(1, Qt::Horizontal, "name");
+    folderStatus->generateRoles();
+    folderStatus->select();
+
+    if (isInit)
+    {
+        auto rec = m_factory.create(RecordType::FolderStatus);
+        rec->setValue(1, "NOT_LOADED");
+        folderStatus->insertRecord(-1, *rec);
+        delete rec;
+
+        rec = m_factory.create(RecordType::FolderStatus);
+        rec->setValue(1, "LOADED");
+        folderStatus->insertRecord(-1, *rec);
+        delete rec;
+
+        rec = m_factory.create(RecordType::FolderStatus);
+        rec->setValue(1, "SYNCHRONISED");
+        folderStatus->insertRecord(-1, *rec);
+        delete rec;
+    }
+
+    setProviders(folderStatus);
+}
+
 void DatabaseHandler::initLabels()
 {
     auto labels = new TableModel();
     QSqlQuery query;
-    query.exec("CREATE TABLE Labels (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
+    auto isInit = query.exec("CREATE TABLE Labels (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
 
     labels->setTable("Labels");
     labels->setEditStrategy(QSqlTableModel::OnManualSubmit);
@@ -171,6 +217,15 @@ void DatabaseHandler::initLabels()
     labels->generateRoles();
     labels->select();
 
+    if (isInit)
+    {
+        auto rec = m_factory.create(RecordType::Label);
+        rec->setValue(1, "NOT_SET");
+        labels->insertRecord(-1, *rec);
+        delete rec;
+    }
+    labels->submitAll();
+
     setLabels(labels);
 }
 
@@ -178,13 +233,23 @@ void DatabaseHandler::initFolders()
 {
     auto folders = new TableModel();
     QSqlQuery query;
-    query.exec("CREATE TABLE Folders (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(128))");
+    query.exec("CREATE TABLE Folders (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(128), datasetId integer, folderStatusId integer, labelId integer)");
     folders->setTable("Folders");
+    folders->setRelation(2, QSqlRelation("Datasets", "id", "name"));
+    folders->setRelation(3, QSqlRelation("FolderStatus", "id", "name"));
+    folders->setRelation(4, QSqlRelation("Labels", "id", "name"));
     folders->setEditStrategy(QSqlTableModel::OnManualSubmit);
     folders->setHeaderData(0, Qt::Horizontal, "id");
     folders->setHeaderData(1, Qt::Horizontal, "name");
+    folders->setHeaderData(2, Qt::Horizontal, "datasetId");
+    folders->setHeaderData(3, Qt::Horizontal, "folderStatusId");
+    folders->setHeaderData(4, Qt::Horizontal, "labelId");
     folders->generateRoles();
     folders->select();
+
+    qDebug() << folders->relation(2).isValid()
+             << folders->relation(3).isValid()
+             << folders->relation(4).isValid();
 
     setFolders(folders);
 }
@@ -230,33 +295,47 @@ void DatabaseHandler::initEntry()
     setEntries(entries);
 }
 
-TableModel *DatabaseHandler::createFolderEntries(int id)
+TableModel *DatabaseHandler::createFolderEntries()
 {
     auto entries = new TableModel();
-    entries->setTable("Entries");
+    entries->setTable("Folders");
 
-    entries->setRelation(3, QSqlRelation("Datasets", "id", "name"));
-    entries->setRelation(4, QSqlRelation("Folders", "id", "name"));
+    entries->setRelation(2, QSqlRelation("Datasets", "id", "name"));
+    entries->setRelation(3, QSqlRelation("FolderStatus", "id", "name"));
+    entries->setRelation(4, QSqlRelation("Labels", "id", "name"));
     entries->setEditStrategy(QSqlTableModel::OnManualSubmit);
     entries->setHeaderData(0, Qt::Horizontal, "id");
-    entries->setHeaderData(1, Qt::Horizontal, "filename");
-    entries->setHeaderData(2, Qt::Horizontal, "labelId");
-    entries->setHeaderData(3, Qt::Horizontal, "datasetId");
-    entries->setHeaderData(4, Qt::Horizontal, "folderId");
+    entries->setHeaderData(1, Qt::Horizontal, "name");
+    entries->setHeaderData(2, Qt::Horizontal, "datasetId");
+    entries->setHeaderData(3, Qt::Horizontal, "folderStatusId");
+    entries->setHeaderData(4, Qt::Horizontal, "labelId");
     entries->generateRoles();
     entries->select();
+
+    return entries;
+}
+
+TableModel *DatabaseHandler::folderStatus() const
+{
+    return m_folderStatus;
+}
+
+TableModel *DatabaseHandler::createFolderEntries(int id)
+{
+    auto entries = createFolderEntries();
+
     entries->setFilter("datasetId=" + QString::number(id));
     return entries;
 }
 
 void DatabaseHandler::updateEntriesRelations(QSqlRecord &rec)
 {
-    qDebug() << "updateEntriesRelations";
+    qDebug()  << "==App.DataBaseHandler== " << "updateEntriesRelations";
     Q_UNUSED(rec)
-    qDebug() << "setup relations" << m_labels->rowCount() << m_entries->relation(2).isValid();
+    qDebug()  << "==App.DataBaseHandler== " << "setup relations" << m_labels->rowCount() << m_entries->relation(2).isValid();
     if (m_labels->rowCount() > 0 && !m_entries->relation(2).isValid())
     {
-        qDebug() << "setup relations";
+        qDebug()  << "==App.DataBaseHandler== " << "setup relations";
         m_entries->setRelation(2, QSqlRelation("Labels", "id", "name"));
     }
 }

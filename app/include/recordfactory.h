@@ -11,7 +11,8 @@ enum RecordType {
     Entry,
     Folder,
     Label,
-    Provider
+    Provider,
+    FolderStatus
 };
 
 class LabelRecord : public QSqlRecord {
@@ -30,11 +31,22 @@ public:
     }
 };
 
+class FolderStatusRecord : public QSqlRecord {
+public:
+    FolderStatusRecord() : QSqlRecord() {
+        append(QSqlField("id", QVariant::Int));
+        append(QSqlField("name", QVariant::String));
+    }
+};
+
 class FolderRecord : public QSqlRecord {
 public:
     FolderRecord() : QSqlRecord() {
         append(QSqlField("id", QVariant::Int));
         append(QSqlField("name", QVariant::String));
+        append(QSqlField("datasetId", QVariant::Int));
+        append(QSqlField("folderStatusId", QVariant::Int));
+        append(QSqlField("labelId", QVariant::Int));
     }
 };
 
@@ -68,6 +80,7 @@ public:
         registerObject<FolderRecord>(RecordType::Folder);
         registerObject<LabelRecord>(RecordType::Label);
         registerObject<ProviderRecord>(RecordType::Provider);
+        registerObject<FolderStatusRecord>(RecordType::FolderStatus);
     }
 };
 
