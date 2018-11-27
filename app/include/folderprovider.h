@@ -4,14 +4,19 @@
 #include <QDebug>
 #include <QVariantList>
 #include <iostream>
+#include <QFileInfoList>
 
 #include "aprovider.h"
 #include "datasetmodel.h"
+#include "parsefoldertask.h"
 
-class FolderProvider : public AProvider {
+class FolderProvider : public QObject, public AProvider {
+    Q_OBJECT
+public slots:
+    void bulkInsert(FolderInfos *);
 public:
     explicit FolderProvider()
-        : AProvider()
+        : QObject(nullptr), AProvider()
 	{
 	}
     void generateModel(const QString &path, int datasetId) override;
@@ -58,6 +63,7 @@ public:
     };
 
     void preload(const QString &path, int datasetId) override;
+//    void parseFolder(const QString &path);
 protected:
     void initModel(const QString& name) override;
 private:

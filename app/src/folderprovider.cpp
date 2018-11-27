@@ -6,6 +6,7 @@
 
 #include "folderprovider.h"
 #include "editor.h"
+#include "parsefoldertask.h"
 
 void FolderProvider::initModel(const QString &name)
 {
@@ -95,6 +96,26 @@ void FolderProvider::preload(const QString &path, int datasetId)
         qDebug() << q.lastError();
     folders->submitAll();
     folders->select();
+}
+
+void FolderProvider::bulkInsert(FolderInfos *infos) {
+    EntryRecord record;
+    auto db = Editor::instance().databaseHandler();
+    auto entries = db->entries();
+    int maxBulk = 100;
+    int startId = entries->rowCount() + 1;
+    const auto dId = infos->datasetId;
+    const auto fId = infos->folderId;
+    for (auto info : infos->list)
+    {
+        record.appendRecord(startId++, info.fileName(), 0, dId, fId);
+        if (record.count() == maxBulk)
+        {
+            FolderProvider::bulkInsertRequest(record, entries);
+        }
+    }
+    if (record.count() > 0)
+        FolderProvider::bulkInsertRequest(record, entries);
 }
 
 void FolderProvider::generateModel(const QString &path, int datasetId)

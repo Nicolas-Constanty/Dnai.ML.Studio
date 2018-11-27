@@ -6,6 +6,7 @@ Editor::Editor(QObject* parent) : QObject(parent)
 	if (!m_instance)
 		m_instance = this;
     m_project = Project::defaultProject();
+    m_taskManager.start();
     m_datasetHandler.initDatabaseHandler();
 }
 
@@ -48,6 +49,11 @@ bool Editor::loadProject(const QString &path)
 void Editor::saveProject()
 {
     m_project->save();
+}
+
+TaskManager *Editor::taskManager()
+{
+    return &m_taskManager;
 }
 
 DatabaseHandler *Editor::databaseHandler()

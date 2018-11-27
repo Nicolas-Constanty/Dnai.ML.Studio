@@ -35,14 +35,17 @@ ApplicationWindow {
         TabBar {
             id: tabBar
             currentIndex: swipeView.currentIndex
+            property var arr: [null, _dataset, null, null, null, null]
+            onCurrentIndexChanged: {
+                if (arr[currentIndex] !== null)
+                    arr[currentIndex].load = true
+            }
+
             TabButton {
                 text: qsTr("Project")
             }
             TabButton {
                 text: qsTr("Dataset")
-                onClicked: {
-                    _dataset.load = true
-                }
             }
             TabButton {
                 text: qsTr("Hyper Parameters")
@@ -115,7 +118,108 @@ ApplicationWindow {
         source: _spitter
     }
 
-    AuthView {
-        id: _authView
+    Rectangle {
+        id: _progressBarPanel
+        width: parent.width
+        anchors.bottom: parent.bottom
+        height: 20
+        color: AppSettings.theme.colors.background.light
+        Label {
+            id: _jobName
+            anchors.left: parent.left
+            anchors.leftMargin: 15
+            anchors.verticalCenter: parent.verticalCenter
+            text: Editor.taskManager.jobName
+        }
+        Label {
+            id: _jobInfo
+            anchors.right: _progressBar.left
+            anchors.left: _jobName.right
+            anchors.leftMargin: 5
+            anchors.rightMargin: 5
+            horizontalAlignment: Text.AlignRight
+            anchors.verticalCenter: parent.verticalCenter
+            text: Editor.taskManager.progressText
+        }
+
+        ProgressBar {
+            id: _progressBar
+            value: Editor.taskManager.progress
+            padding: 2
+            anchors.right: parent.right
+            anchors.rightMargin: 15
+            anchors.verticalCenter: parent.verticalCenter
+            indeterminate: Editor.taskManager.indeterminate
+
+            contentItem: Item {
+                implicitWidth: 200
+                implicitHeight: 4
+
+                Rectangle {
+                    width: _progressBar.visualPosition * parent.width
+                    height: parent.height
+                    color: AppSettings.theme.colors.accent.green
+                }
+            }
+        }
+        //STATES
+        states: [
+            State{
+                name: "Collapsed"
+                PropertyChanges{ target: _progressBarPanel; anchors.bottomMargin: - 20 }
+                PropertyChanges{ target: _shadowProgressBar; opacity: 0 }
+            },
+            State{
+                name:"Expended"
+                PropertyChanges{ target: _progressBarPanel; anchors.bottomMargin: 0 }
+                PropertyChanges{ target: _shadowProgressBar; opacity: 1 }
+            }
+        ]
+        state: Editor.taskManager.jobRunning ? "Expended" : "Collapsed"
+        transitions: [
+            Transition {
+                from: "Collapsed"
+                to: "Expended"
+
+               NumberAnimation {
+                   target: _progressBarPanel
+                   property: "height"
+                   duration: 150
+                   easing.type: Easing.InOutQuad
+               }
+               NumberAnimation {
+                   target: _shadowProgressBar
+                   property: "anchors.bottomMargin"
+                   duration: 150
+                   easing.type: Easing.InOutQuad
+               }
+            },
+            Transition {
+                from: "Expended"
+                to: "Collapsed"
+                NumberAnimation {
+                   target: _progressBarPanel
+                   property: "anchors.bottomMargin"
+                   duration: 150
+                   easing.type: Easing.InOutQuad
+                }
+                NumberAnimation {
+                   target: _shadowProgressBar
+                   property: "opacity"
+                   duration: 150
+                   easing.type: Easing.InOutQuad
+                }
+            }
+        ]
+    }
+
+    DropShadow {
+        id: _shadowProgressBar
+        anchors.fill: _progressBarPanel
+        verticalOffset: -3
+        radius: 8.0
+        samples: 17
+        color: "#40000000"
+        source: _progressBarPanel
     }
 }

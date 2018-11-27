@@ -85,6 +85,12 @@ T.Content {
                         anchors.verticalCenter: parent.verticalCenter
                         font.pointSize: 12
                     }
+                    Button {
+                        anchors.right: parent.right
+                        onClicked: {
+                            Editor.datasetHandler.generateFolderEntries(_dataset.modelIndex)
+                        }
+                    }
                 }
                 //INFOS
                 Item {

@@ -6,6 +6,7 @@
 #include "apihandler.h"
 #include "project.h"
 #include "databasehandler.h"
+#include "taskmanager.h"
 
 class Editor : public QObject
 {
@@ -14,12 +15,14 @@ class Editor : public QObject
     Q_PROPERTY(DatasetHandler *datasetHandler READ datasetHandler CONSTANT)
     Q_PROPERTY(ApiHandler *apiHandler READ apiHandler CONSTANT)
     Q_PROPERTY(Project *project READ project WRITE setProject NOTIFY projectChanged)
+    Q_PROPERTY(TaskManager *taskManager READ taskManager CONSTANT)
 public:
 	explicit Editor(QObject *parent = nullptr);
 
     DatabaseHandler *databaseHandler();
     DatasetHandler *datasetHandler();
     ApiHandler *apiHandler();
+    TaskManager *taskManager();
 
 	static Editor &instance();
 
@@ -27,6 +30,7 @@ public:
 
     Q_INVOKABLE bool loadProject(const QString &path);
     Q_INVOKABLE void saveProject();
+
 
 
 public slots:
@@ -39,9 +43,9 @@ private:
     DatabaseHandler m_databaseHandler;
     DatasetHandler m_datasetHandler;
     ApiHandler m_apiHandler;
+    TaskManager m_taskManager;
     Project *m_project;
 	static Editor *m_instance;
-
 };
 
 #endif // EDITOR_H

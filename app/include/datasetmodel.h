@@ -23,6 +23,8 @@ public:
 
     Q_INVOKABLE void setFilter(const QString &filter) override;
     Q_INVOKABLE void display();
+    bool select() override;
+//    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 public slots:
     void setCount(int count);

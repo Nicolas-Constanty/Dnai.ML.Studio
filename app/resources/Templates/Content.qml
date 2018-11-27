@@ -16,10 +16,10 @@ Item {
     Page {
         id: _page
         anchors.fill: parent
-        anchors.margins: 15
+        anchors.margins: 30
         onBackgroundChanged: {
             background.anchors.fill = background.parent
-            background.anchors.margins = -15
+            background.anchors.margins = -30
         }
         footer: Item {
             height: 40

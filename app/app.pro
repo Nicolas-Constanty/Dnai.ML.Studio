@@ -23,7 +23,8 @@ SOURCES += \
     src/aprovider.cpp \
     src/datasetmodel.cpp \
     src/project.cpp \
-    src/databasehandler.cpp
+    src/databasehandler.cpp \
+    src/parsefoldertask.cpp
 
 RESOURCES += qml.qrc
 
@@ -39,6 +40,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 INCLUDEPATH += include/
+INCLUDEPATH += $${PWD}/../libs/TaskManager/
 
 HEADERS += \
     include/editor.h \
@@ -51,7 +53,10 @@ HEADERS += \
     include/project.h \
     include/databasehandler.h \
     include/ifactory.h \
-    include/recordfactory.h
+    include/recordfactory.h \
+    include/parsefoldertask.h
 
 DISTFILES += \
     dark.json
+
+LIBS += -L$${PWD}/../libs/ -ltaskmanager

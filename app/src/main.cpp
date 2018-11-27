@@ -14,7 +14,7 @@ void registerQmlTypes()
         Q_UNUSED(e)
         Q_UNUSED(js)
 
-        auto editor = new Editor();
+        const auto editor = new Editor();
         return editor;
     }
     );
@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<ApiHandler>("App.Controllers", 1, 0, "ApiHandler");
     qmlRegisterType<TableModel>("App.Controllers", 1, 0, "TableModel");
     qmlRegisterType<Project>("App.Controllers", 1, 0, "Project");
+    qmlRegisterType<TaskManager>("App.Controllers", 1, 0, "TaskManager");
     QGuiApplication app(argc, argv);
 
     QGuiApplication::setOrganizationName("SaltyStudio");

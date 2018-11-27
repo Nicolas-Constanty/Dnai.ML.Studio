@@ -85,6 +85,28 @@ void TableModel::display()
         qDebug()  << "==App.DatasetModel== " << "Rec " << i << " : " << record(i);
 }
 
+bool TableModel::select()
+{
+    bool select = QSqlRelationalTableModel::select();
+    while (canFetchMore()) {
+        fetchMore();
+    }
+    return select;
+}
+
+//int TableModel::rowCount(const QModelIndex &parent) const
+//{
+//    QSqlQuery q;
+//    q.prepare("SELECT COUNT(*) FROM " + tableName());
+//    if (q.exec())
+//    {
+//        qDebug() << q.record().value(0).toInt() << q.lastQuery();
+//        return q.record().value(0).toInt();
+//    }
+//    qDebug() << q.lastQuery() << q.lastError();
+//    return QSqlRelationalTableModel::rowCount(parent);
+//}
+
 void TableModel::setCount(int count)
 {
     if (m_count == count)

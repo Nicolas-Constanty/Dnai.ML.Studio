@@ -2,10 +2,13 @@
 #define DATASET_HANDLER_H
 
 #include <QObject>
+#include <QMap>
 #include <QQmlListProperty>
+#include <QFileInfoList>
 #include "aprovider.h"
 #include "datasetmodel.h"
 #include "databasehandler.h"
+#include "parsefoldertask.h"
 
 class DatasetHandler : public QObject
 {
@@ -39,8 +42,10 @@ public:
     Q_INVOKABLE int foldersCount() const;
 
     Q_INVOKABLE QString getLabel(int index) const;
+    Q_INVOKABLE void generateFolderEntries(int index);
 
-
+public slots:
+    void getFolderEntries(FolderInfos *l);
 signals:
 	void currentDatasetIndexChanged(int index);
     void foldersChanged(const QQmlListProperty<TableModel> &folders);
@@ -61,6 +66,8 @@ private:
 
 
     static QVector<AProvider *> providers;
+    static QMap<QString, AProvider *> providerNames;
     QVector<TableModel *> m_folders;
+    void parseFolder(const QString &path, int datasetId, int folderId);
 };
 #endif //DATASET_HANDLER_H

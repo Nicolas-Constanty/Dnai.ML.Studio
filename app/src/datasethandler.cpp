@@ -10,9 +10,14 @@
 #include "datasethandler.h"
 #include "folderprovider.h"
 #include "editor.h"
+#include "parsefoldertask.h"
 
 QVector<AProvider *> DatasetHandler::providers = {
     new FolderProvider()
+};
+
+QMap<QString, AProvider *> DatasetHandler::providerNames {
+    {"Folder", DatasetHandler::providers[0]}
 };
 
 
@@ -209,5 +214,38 @@ QString DatasetHandler::getLabel(const int index) const
     return m_dbh->labels()->record(index).value("name").toString();
 }
 
+void DatasetHandler::generateFolderEntries(int index)
+{
+    const auto folder = this->folder(index);
+    const auto rec = m_dbh->datasets()->record(index);
+    auto dirPath = rec.value(2).toString();
+    auto id = rec.value(0).toInt();
+    if (folder) {
+        for (auto i = 0; i < folder->rowCount(); i++)
+        {
+            const auto r = folder->record(i);
+            auto path = dirPath + "/" + r.value(1).toString();
+            parseFolder(path, id, r.value(0).toInt());
+        }
+    }
+}
+
+void DatasetHandler::getFolderEntries(FolderInfos *l)
+{
+//     ->
+}
+
+void DatasetHandler::parseFolder(const QString &path, int datasetId, int folderId)
+{
+//    qDebug() << path;
+    QStringList filters;
+    filters << "*.jpg" << "*.png";
+    Editor::instance().
+            taskManager()->
+            scheduleTask(new ProgressTask(new ParseFolderTask(
+                                              datasetId, folderId, static_cast<FolderProvider *>(providers[0]),
+                                              path, filters, QDir::Files),
+                                          "Loading folder entries"));
+}
 
 
