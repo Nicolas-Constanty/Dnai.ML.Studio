@@ -10,7 +10,6 @@ class IterableQQmlPropertyMap : public QAbstractListModel
 public:
     IterableQQmlPropertyMap(QObject *parent = nullptr);
 
-    // QAbstractItemModel interface
 public:
     enum ROLES
     {

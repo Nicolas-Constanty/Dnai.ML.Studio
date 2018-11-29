@@ -4,39 +4,67 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QDateTime>
+#include <QVariantList>
+#include <QDebug>
 
 #include "progresstask.h"
+#include "datasetmodel.h"
 
 
 struct FolderInfos {
-    QFileInfoList list;
+    QStringList files;
     int datasetId;
     int folderId;
 };
 
-struct QDirSortItem
-{
-    mutable QString filename_cache;
-    mutable QString suffix_cache;
-    QFileInfo item;
-};
-
-class QDirSortItemComparator
-{
-    int qt_cmp_si_sort_flags;
-public:
-    QDirSortItemComparator(int flags);
-    bool operator()(const QDirSortItem &, const QDirSortItem &) const;
-};
-
-
 class ParseFolderTask : public QRunnableProgress {
     Q_OBJECT
-
 signals:
-    void sendResults(FolderInfos *infos);
+    void sendResults(int datasetId, int index);
 public:
-    ParseFolderTask(int datasetId, int folderId, QObject *receiver,
+    class EntryRecord {
+    public:
+        QVariantList ids;
+        QVariantList filenames;
+        QVariantList labelIds;
+        QVariantList datasetIds;
+        QVariantList folderIds;
+
+        void clear()
+        {
+            ids.clear();
+            filenames.clear();
+            labelIds.clear();
+            datasetIds.clear();
+            folderIds.clear();
+            m_count = 0;
+        }
+
+        void appendRecord(int id, const QString &filename, int labelId, int datasetId, int folderId)
+        {
+            ids << id;
+            filenames << filename;
+            labelIds << labelId;
+            datasetIds << datasetId;
+            folderIds << folderId;
+            m_count++;
+        }
+
+        int count()
+        {
+            return m_count;
+        }
+
+        friend QDebug operator<<(QDebug os, const EntryRecord& e)
+        {
+            os << e.ids << "\n" << e.filenames << "\n" << e.labelIds << "\n" << e.datasetIds << "\n" << e.folderIds;
+            return os;
+        }
+    private:
+        int m_count = 0;
+    };
+
+    ParseFolderTask(int index, int datasetId, int folderId, QObject *receiver,
                     const QString &path,
                     const QStringList &filters,
                     QDir::Filters flags = QDir::NoFilter);
@@ -44,6 +72,7 @@ public:
     void run() override;
 
 private:
+    int m_index;
     int m_datasetId;
     int m_folderId;
     QString m_path;
@@ -55,6 +84,8 @@ private:
                       QFileInfoList &l,
                       QStringList *names,
                       QFileInfoList *infos);
+    void bulkInsert(FolderInfos *infos, const QSqlDatabase& db);
+    bool bulkInsertRequest(EntryRecord &record, const QSqlDatabase &db);
 };
 
 #endif // PARSEFOLDERTASK_H

@@ -19,19 +19,16 @@ public:
     virtual ~AProvider() = default;
 
     virtual const QSqlTableModel& data() const;
-	virtual QString toCsv();
-//	const QString& path() const;
-//	void setPath(const QString& path);
+    virtual QString toCsv();
 
 	void updateProvider(const QString &name);
 	void updateProviderFromCsv(const QString &name, const QString &csvPath);
 
     virtual void preload(const QString &path, int datasetId) = 0;
-    virtual void generateModel(const QString &path, int datasetId) = 0;
 
 protected:
 	virtual void initModel(const QString& name) = 0;
-	void generateModelFromCsv(const QString& path);
+    void generateModelFromCsv(const QString& path);
 
 protected:
     QSqlTableModel m_data;

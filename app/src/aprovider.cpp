@@ -29,7 +29,6 @@ QString AProvider::toCsv()
 void AProvider::updateProvider(const QString& name)
 {
 	initModel(name);
-//	generateModel();
 }
 
 void AProvider::updateProviderFromCsv(const QString& name, const QString& csvPath)

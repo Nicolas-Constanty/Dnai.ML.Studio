@@ -15,7 +15,6 @@ class DatasetHandler : public QObject
 	Q_OBJECT
     Q_PROPERTY(QQmlListProperty<TableModel> folders READ folders NOTIFY foldersChanged)
 	Q_PROPERTY(int currentDatasetIndex READ currentDatasetIndex WRITE setCurrentDatasetIndex NOTIFY currentDatasetIndexChanged)
-//    Q_PROPERTY(Dataset *currentDataset READ currentDataset NOTIFY currentDatasetChanged)
 
 public:
     explicit DatasetHandler(QObject * parent = nullptr);
@@ -24,7 +23,6 @@ public:
     void initDatabaseHandler();
 
 	int currentDatasetIndex() const;
-//    Dataset * currentDataset() const;
 	void setCurrentDatasetIndex(int currentDatasetIndex);
 
     QQmlListProperty<TableModel> folders();
@@ -45,11 +43,11 @@ public:
     Q_INVOKABLE void generateFolderEntries(int index);
 
 public slots:
-    void getFolderEntries(FolderInfos *l);
+    void updateFolder(int folderId, int index);
+
 signals:
 	void currentDatasetIndexChanged(int index);
     void foldersChanged(const QQmlListProperty<TableModel> &folders);
-//    void currentDatasetChanged(Dataset *dataset);
 
 private slots:
 private:
@@ -61,13 +59,11 @@ private:
 
     int m_currentDatasetIndex;
     DatabaseHandler *m_dbh;
-//    QVector<Dataset *> m_datasetlist;
     bool createDatasetEntry(AProvider::Type t, const QString &path);
-
 
     static QVector<AProvider *> providers;
     static QMap<QString, AProvider *> providerNames;
     QVector<TableModel *> m_folders;
-    void parseFolder(const QString &path, int datasetId, int folderId);
+    void parseFolder(const QString &path, int datasetId, int folderId, int index);
 };
 #endif //DATASET_HANDLER_H

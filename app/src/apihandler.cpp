@@ -10,8 +10,6 @@ RouteMap ApiHandler::routes = {
 ApiHandler::ApiHandler(QObject *parent) : QObject (parent)
 {
     m_manager = new QNetworkAccessManager(this);
-//    QObject::connect(m_manager, SIGNAL(finished(QNetworkReply*)),
-//            this, SLOT(replyFinished(QNetworkReply*)));
 }
 
 QString ApiHandler::addr() const

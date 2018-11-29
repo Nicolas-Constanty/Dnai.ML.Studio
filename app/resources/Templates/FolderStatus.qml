@@ -5,7 +5,7 @@ import Dnai.Settings 1.0
 
 Rectangle {
     id: rec
-    property int status: 1
+    property string status: ""
     width: radius * 2
     height: radius * 2
     Rectangle {
@@ -26,9 +26,9 @@ Rectangle {
     }
 
     function updateColor() {
-        if (status == 2)
+        if (status === "LOADED")
             rec.color = AppSettings.theme.colors.accent.yellow
-        else if (status == 3)
+        else if (status === "SYNCHRONISED")
             rec.color = AppSettings.theme.colors.accent.green
         else
             rec.color = AppSettings.theme.colors.accent.red

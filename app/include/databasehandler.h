@@ -93,6 +93,7 @@ private:
     TableModel *m_folders;
     TableModel *m_folderStatus;
     RecordFactory m_factory;
+    QString m_dbConnectionName;
 };
 
 #endif // DATABASEHANDLER_H

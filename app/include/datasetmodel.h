@@ -18,18 +18,17 @@ public:
 	QHash<int, QByteArray> roleNames() const override;
 	QVariant data(const QModelIndex& idx, int role) const override;
 
-    //    Q_INVOKABLE QVariantMap operator[](int) const;
     int count() const;
 
     Q_INVOKABLE void setFilter(const QString &filter) override;
     Q_INVOKABLE void display();
     bool select() override;
-//    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 public slots:
     void setCount(int count);
     void updateCount(QSqlRecord &model);
     void updateCount();
+    bool updateRowInTable(int row, const QSqlRecord &values) override;
 
 signals:
     void countChanged(int count);

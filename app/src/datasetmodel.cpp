@@ -58,7 +58,7 @@ QVariant TableModel::data(const QModelIndex& idx, const int role) const
 
         if (relation(m).isValid())
         {
-            QSqlQuery q;
+            QSqlQuery q(database());
             q.prepare("SELECT id FROM " + tableName() + "  WHERE id=" + QString::number(idx.row()));
             if (!q.exec())
                 qDebug() << q.lastError();
@@ -94,19 +94,6 @@ bool TableModel::select()
     return select;
 }
 
-//int TableModel::rowCount(const QModelIndex &parent) const
-//{
-//    QSqlQuery q;
-//    q.prepare("SELECT COUNT(*) FROM " + tableName());
-//    if (q.exec())
-//    {
-//        qDebug() << q.record().value(0).toInt() << q.lastQuery();
-//        return q.record().value(0).toInt();
-//    }
-//    qDebug() << q.lastQuery() << q.lastError();
-//    return QSqlRelationalTableModel::rowCount(parent);
-//}
-
 void TableModel::setCount(int count)
 {
     if (m_count == count)
@@ -127,17 +114,7 @@ void TableModel::updateCount()
     setCount(rowCount());
 }
 
-// TODO : Optimize this later
-//QVariantMap DatasetModel::operator[](int row) const
-//{
-//    QHash<int,QByteArray> names = roleNames();
-//    QHashIterator<int, QByteArray> i(names);
-//    QVariantMap res;
-//    while (i.hasNext()) {
-//        i.next();
-//        QModelIndex idx = index(row, 0);
-//        QVariant data = idx.data(i.key());
-//        res[i.value()] = data;
-//    }
-//    return res;
-//}
+bool TableModel::updateRowInTable(int row, const QSqlRecord &values)
+{
+    return QSqlRelationalTableModel::updateRowInTable(row, values);
+}

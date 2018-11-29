@@ -14,7 +14,6 @@ Popup {
     height: 230
     modal: true
     padding: 0
-//        visible: false
 
     Rectangle {
         anchors.fill: parent

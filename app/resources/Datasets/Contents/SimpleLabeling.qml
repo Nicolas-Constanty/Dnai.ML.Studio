@@ -143,7 +143,7 @@ T.Content {
 
                                     T.FolderStatus {
                                         id: _status
-                                        status: delegate.folder._folderStatusId
+                                        status: delegate.folder.folderStatusId
                                         radius: 4
                                         anchors.right: parent.right
                                         anchors.rightMargin: 15

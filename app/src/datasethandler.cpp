@@ -101,7 +101,7 @@ int DatasetHandler::foldersCount(QQmlListProperty<TableModel>* list) {
 
 bool DatasetHandler::createDatasetEntry(AProvider::Type t, const QString & path)
 {
-    QSqlQuery q;
+    QSqlQuery q(m_dbh->datasets()->database());
 
     q.prepare("INSERT into Datasets (id, name, path, providerId) values (?, ?, ?, ?)");
     q.bindValue(0, m_dbh->datasets()->rowCount() + 1);
@@ -169,14 +169,6 @@ int DatasetHandler::currentDatasetIndex() const
     return m_currentDatasetIndex;
 }
 
-//Dataset *DatasetHandler::currentDataset() const
-//{
-
-//    if (m_datasetlist.count() < 1)
-//        return nullptr;
-//    return m_datasetlist[m_currentDatasetIndex];
-//}
-
 void DatasetHandler::setCurrentDatasetIndex(const int currentDatasetIndex)
 {
     if (m_currentDatasetIndex == currentDatasetIndex)
@@ -184,7 +176,6 @@ void DatasetHandler::setCurrentDatasetIndex(const int currentDatasetIndex)
 
     m_currentDatasetIndex = currentDatasetIndex;
     emit currentDatasetIndexChanged(m_currentDatasetIndex);
-    //    emit currentDatasetChanged(currentDataset());
 }
 
 
@@ -199,10 +190,6 @@ QQmlListProperty<TableModel> DatasetHandler::folders()
     };
 }
 
-//Dataset *DatasetHandler::dataset(const int index) const
-//{
-//    return nullptr;//m_datasets.at(index);
-//}
 
 void DatasetHandler::clearFolders() {
 //    m_datasets.clear();
@@ -225,25 +212,28 @@ void DatasetHandler::generateFolderEntries(int index)
         {
             const auto r = folder->record(i);
             auto path = dirPath + "/" + r.value(1).toString();
-            parseFolder(path, id, r.value(0).toInt());
+            parseFolder(path, id, r.value(0).toInt(), index);
         }
     }
 }
 
-void DatasetHandler::getFolderEntries(FolderInfos *l)
+void DatasetHandler::updateFolder(int folderId, int index)
 {
-//     ->
+    QSqlQuery q(m_dbh->folders()->database());
+
+    QString query = "UPDATE Folders SET folderStatusId=" + QString::number(FolderStatus::LOADED) + " WHERE id=" + QString::number(folderId);
+    if (!q.exec(query))
+        qWarning() << "QSqlQuery Error : " << q.lastError();
+    m_folders[index]->select();
 }
 
-void DatasetHandler::parseFolder(const QString &path, int datasetId, int folderId)
+void DatasetHandler::parseFolder(const QString &path, int datasetId, int folderId, int index)
 {
-//    qDebug() << path;
     QStringList filters;
     filters << "*.jpg" << "*.png";
     Editor::instance().
             taskManager()->
-            scheduleTask(new ProgressTask(new ParseFolderTask(
-                                              datasetId, folderId, static_cast<FolderProvider *>(providers[0]),
+            scheduleTask(new ProgressTask(new ParseFolderTask(index, datasetId, folderId, this,
                                               path, filters, QDir::Files),
                                           "Loading folder entries"));
 }

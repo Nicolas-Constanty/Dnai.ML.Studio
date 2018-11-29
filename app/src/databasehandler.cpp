@@ -4,6 +4,7 @@
 #include <QSqlField>
 #include <QSqlError>
 #include <QDebug>
+#include <QThread>
 
 #include "databasehandler.h"
 
@@ -15,11 +16,13 @@ DatabaseHandler::DatabaseHandler(QObject *parent) : QObject (parent)
     m_entries = nullptr;
     m_folders = nullptr;
     m_folderStatus = nullptr;
+    m_dbConnectionName = "ml_studio_" + QString::number((quint64)QThread::currentThread(), 16);
+    qDebug() << m_dbConnectionName;
 }
 
 void DatabaseHandler::initDatabases(const QString &dbpath)
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
     db.setHostName("dnai");
     db.setDatabaseName(dbpath);
     db.setUserName("user");
@@ -33,7 +36,7 @@ void DatabaseHandler::initDatabases(const QString &dbpath)
     initDatasets();
     initFolders();
     initEntry();
-    qDebug() << "==App.DataBaseHandler== " << QSqlDatabase::database().tables();
+    qDebug() << "==App.DataBaseHandler== " << QSqlDatabase::database(m_dbConnectionName).tables();
 }
 
 TableModel *DatabaseHandler::providers() const
@@ -104,8 +107,6 @@ void DatabaseHandler::setDatasets(TableModel *datasets)
 
     delete m_datasets;
     m_datasets = datasets;
-//    QObject::connect(m_datasets, SIGNAL(beforeInsert(QSqlRecord&)),
-//                     m_datasets, SLOT(updateCount(QSqlRecord&)));
     emit datasetsChanged(m_datasets);
     datasets->updateCount();
 }
@@ -138,9 +139,10 @@ void DatabaseHandler::setFolders(TableModel *folders)
 
 void DatabaseHandler::initProvider()
 {
-    auto providers = new TableModel();
+    qDebug() << "=======================================>" << QSqlDatabase::database(m_dbConnectionName);
+    auto providers = new TableModel(nullptr, QSqlDatabase::database(m_dbConnectionName));
 
-    QSqlQuery query;
+    QSqlQuery query(providers->database());
     auto isInit = query.exec("CREATE TABLE Providers (id integer PRIMARY KEY, name varchar(40) UNIQUE)");
 
     providers->setTable("Providers");
@@ -172,9 +174,9 @@ void DatabaseHandler::initProvider()
 
 void DatabaseHandler::initFolderStatus()
 {
-    auto folderStatus = new TableModel();
+    auto folderStatus = new TableModel(nullptr, QSqlDatabase::database(m_dbConnectionName));
 
-    QSqlQuery query;
+    QSqlQuery query(folderStatus->database());
     auto isInit = query.exec("CREATE TABLE FolderStatus (id integer PRIMARY KEY, name varchar(40) UNIQUE)");
 
     folderStatus->setTable("FolderStatus");
@@ -206,8 +208,8 @@ void DatabaseHandler::initFolderStatus()
 
 void DatabaseHandler::initLabels()
 {
-    auto labels = new TableModel();
-    QSqlQuery query;
+    auto labels = new TableModel(nullptr, QSqlDatabase::database(m_dbConnectionName));
+    QSqlQuery query(labels->database());
     auto isInit = query.exec("CREATE TABLE Labels (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE)");
 
     labels->setTable("Labels");
@@ -231,8 +233,8 @@ void DatabaseHandler::initLabels()
 
 void DatabaseHandler::initFolders()
 {
-    auto folders = new TableModel();
-    QSqlQuery query;
+    auto folders = new TableModel(nullptr, QSqlDatabase::database(m_dbConnectionName));
+    QSqlQuery query(folders->database());
     query.exec("CREATE TABLE Folders (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(128), datasetId integer, folderStatusId integer, labelId integer)");
     folders->setTable("Folders");
     folders->setRelation(2, QSqlRelation("Datasets", "id", "name"));
@@ -256,8 +258,8 @@ void DatabaseHandler::initFolders()
 
 void DatabaseHandler::initDatasets()
 {
-    auto datasets = new TableModel();
-    QSqlQuery query;
+    auto datasets = new TableModel(nullptr, QSqlDatabase::database(m_dbConnectionName));
+    QSqlQuery query(datasets->database());
     query.exec("CREATE TABLE Datasets (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, name varchar(40) UNIQUE, path varchar(256), providerId integer)");
     datasets->setTable("Datasets");
     datasets->setRelation(3, QSqlRelation("Providers", "id", "name"));
@@ -276,8 +278,8 @@ void DatabaseHandler::initDatasets()
 
 void DatabaseHandler::initEntry()
 {
-    auto entries = new TableModel();
-    QSqlQuery query;
+    auto entries = new TableModel(nullptr, QSqlDatabase::database(m_dbConnectionName));
+    QSqlQuery query(entries->database());
     query.exec("CREATE TABLE Entries (id integer PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE, filename varchar(128), labelId integer, datasetId integer, folderId integer)");
     entries->setTable("Entries");
 
@@ -297,7 +299,7 @@ void DatabaseHandler::initEntry()
 
 TableModel *DatabaseHandler::createFolderEntries()
 {
-    auto entries = new TableModel();
+    auto entries = new TableModel(nullptr, QSqlDatabase::database(m_dbConnectionName));
     entries->setTable("Folders");
 
     entries->setRelation(2, QSqlRelation("Datasets", "id", "name"));
@@ -361,7 +363,7 @@ void DatabaseHandler::setLabelNames(const QStringList &labelNames)
 
 void DatabaseHandler::removeLabel(const int id)
 {
-    QSqlQuery query;
+    QSqlQuery query(m_labels->database());
     query.prepare("DELETE FROM Labels WHERE id = (?)");
     query.addBindValue(id);
     if (query.exec())
